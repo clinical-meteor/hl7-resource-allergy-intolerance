@@ -1,8 +1,8 @@
 Package.describe({
-  name: 'clinical:hl7-resource-allergy-intolerance',
+  name: 'clinical:hl7-resource-allergy-intollerance',
   version: '1.0.2',
-  summary: 'HL7 FHIR Resource - AllergyIntolerance',
-  git: 'https://github.com/clinical-meteor/hl7-resource-allergy-intolerance',
+  summary: 'HL7 FHIR Resource - AllergyIntollerance',
+  git: 'https://github.com/clinical-meteor/hl7-resource-allergy-intollerance',
   documentation: 'README.md'
 });
 
@@ -19,11 +19,11 @@ Package.onUse(function (api) {
   api.use('clinical:base-model@1.3.5');
   api.use('clinical:hl7-resource-datatypes@0.4.0');
 
-  api.addFiles('lib/hl7-resource-allergy-intolerance.js', ['client', 'server']);
+  api.addFiles('lib/hl7-resource-allergy-intollerance.js', ['client', 'server']);
   api.addFiles('server/rest.js', 'server');
   api.addFiles('server/initialize.js', 'server');
 
-  api.export('AllergyIntolerance');
-  api.export('AllergyIntolerances');
-  api.export('AllergyIntoleranceSchema');
+  api.export('AllergyIntollerance');
+  api.export('AllergyIntollerances');
+  api.export('AllergyIntolleranceSchema');
 });

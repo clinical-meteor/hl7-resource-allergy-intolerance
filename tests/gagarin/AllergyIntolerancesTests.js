@@ -1,16 +1,16 @@
-describe('clinical:hl7-resources-allergy-intolerance', function () {
+describe('clinical:hl7-resources-allergy-intollerance', function () {
   var server = meteor();
   var client = browser(server);
 
-  it('AllergyIntolerances should exist on the client', function () {
+  it('AllergyIntollerances should exist on the client', function () {
     return client.execute(function () {
-      expect(AllergyIntolerances).to.exist;
+      expect(AllergyIntollerances).to.exist;
     });
   });
 
-  it('AllergyIntolerances should exist on the server', function () {
+  it('AllergyIntollerances should exist on the server', function () {
     return server.execute(function () {
-      expect(AllergyIntolerances).to.exist;
+      expect(AllergyIntollerances).to.exist;
     });
   });
 
