@@ -7,7 +7,7 @@ JsonRoutes.Middleware.use(
 
 
 
-JsonRoutes.add("get", "/fhir/AllergyIntollerance/:id", function (req, res, next) { process.env.DEBUG && console.log('GET /fhir/AllergyIntollerance/' + req.params.id);
+JsonRoutes.add("get", "/fhir/AllergyIntolerance/:id", function (req, res, next) { process.env.DEBUG && console.log('GET /fhir/AllergyIntolerance/' + req.params.id);
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   var accessTokenStr = (req.params && req.params.access_token) || (req.query && req.query.access_token);
@@ -19,16 +19,16 @@ JsonRoutes.add("get", "/fhir/AllergyIntollerance/:id", function (req, res, next)
 
     if (typeof SiteStatistics === "object") {
       SiteStatistics.update({_id: "configuration"}, {$inc:{
-        "AllergyIntollerances.count.read": 1 }});
+        "AllergyIntolerances.count.read": 1 }});
     }
 
     var id = req.params.id;
-    var allergyIntolleranceData = AllergyIntollerances.findOne(id); delete allergyIntolleranceData._document;
-    process.env.TRACE && console.log('allergyIntolleranceData', allergyIntolleranceData);
+    var allergyIntoleranceData = AllergyIntolerances.findOne(id); delete allergyIntoleranceData._document;
+    process.env.TRACE && console.log('allergyIntoleranceData', allergyIntoleranceData);
 
     JsonRoutes.sendResult(res, {
       code: 200,
-      data: allergyIntolleranceData
+      data: allergyIntoleranceData
     });
   } else {
     JsonRoutes.sendResult(res, {
@@ -39,7 +39,7 @@ JsonRoutes.add("get", "/fhir/AllergyIntollerance/:id", function (req, res, next)
 
 
 
-JsonRoutes.add("get", "/fhir/AllergyIntollerance", function (req, res, next) { process.env.DEBUG && console.log('GET /fhir/AllergyIntollerance', req.query);
+JsonRoutes.add("get", "/fhir/AllergyIntolerance", function (req, res, next) { process.env.DEBUG && console.log('GET /fhir/AllergyIntolerance', req.query);
   res.setHeader("Access-Control-Allow-Origin", "*");
 
   var accessTokenStr = (req.params && req.params.access_token) || (req.query && req.query.access_token);
@@ -51,7 +51,7 @@ JsonRoutes.add("get", "/fhir/AllergyIntollerance", function (req, res, next) { p
 
     if (typeof SiteStatistics === "object") {
       SiteStatistics.update({_id: "configuration"}, {$inc:{
-        "AllergyIntollerances.count.search-type": 1 }});
+        "AllergyIntolerances.count.search-type": 1 }});
     }
 
     var databaseQuery = {};
@@ -90,16 +90,16 @@ JsonRoutes.add("get", "/fhir/AllergyIntollerance", function (req, res, next) { p
     // }
 
     process.env.DEBUG && console.log('databaseQuery', databaseQuery);
-    process.env.DEBUG && console.log('AllergyIntollerances.find(id)', AllergyIntollerances.find(databaseQuery).fetch()); // because we're using BaseModel and a _transform() function
-    // AllergyIntollerances returns an object instead of a pure JSON document // it stores a shadow reference of the original doc, which we're removing here
-    var allergyIntolleranceData = AllergyIntollerances.find(databaseQuery).fetch();
-    allergyIntolleranceData.forEach(function(patient){
+    process.env.DEBUG && console.log('AllergyIntolerances.find(id)', AllergyIntolerances.find(databaseQuery).fetch()); // because we're using BaseModel and a _transform() function
+    // AllergyIntolerances returns an object instead of a pure JSON document // it stores a shadow reference of the original doc, which we're removing here
+    var allergyIntoleranceData = AllergyIntolerances.find(databaseQuery).fetch();
+    allergyIntoleranceData.forEach(function(patient){
       delete patient._document;
     });
 
     JsonRoutes.sendResult(res, {
       code: 200,
-      data: allergyIntolleranceData
+      data: allergyIntoleranceData
     });
   } else {
     JsonRoutes.sendResult(res, {

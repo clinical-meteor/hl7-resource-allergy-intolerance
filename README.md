@@ -1,12 +1,12 @@
-##clinical:hl7-resource-allergy-intollerance
+##clinical:hl7-resource-allergy-intolerance
 
-HL7 FHIR Resource - AllergyIntollerance
+HL7 FHIR Resource - AllergyIntolerance
 
 
 ===============================
 #### Conformance Statement  
 
-The resource in this package implements the FHIR Patient Resource schema provided at  [https://www.hl7.org/fhir/allergyintollerance.html](https://www.hl7.org/fhir/allergyintollerance.html).  
+The resource in this package implements the FHIR Patient Resource schema provided at  [https://www.hl7.org/fhir/allergyintolerance.html](https://www.hl7.org/fhir/allergyintolerance.html).  
 
 
 ===============================
@@ -14,7 +14,7 @@ The resource in this package implements the FHIR Patient Resource schema provide
 
 ````bash
 # to add hl7 resource schemas and rest routes
-meteor add clinical:hl7-resource-allergy-intollerance
+meteor add clinical:hl7-resource-allergy-intolerance
 
 # to initialize default data
 INITIALIZE=true meteor
@@ -27,15 +27,15 @@ INITIALIZE=true meteor
 let peanutAllergy = {
 
 }
-AllergyIntollerances.insert(peanutAllergy);
+AllergyIntolerances.insert(peanutAllergy);
 ```
 
 ===============================
 #### Extending the Schema
 
 ```js
-ExtendedAllergyIntolleranceSchema = new SimpleSchema([
-  AllergyIntolleranceSchema,
+ExtendedAllergyIntoleranceSchema = new SimpleSchema([
+  AllergyIntoleranceSchema,
   {
     "createdAt": {
       "type": Date,
@@ -43,7 +43,7 @@ ExtendedAllergyIntolleranceSchema = new SimpleSchema([
     }
   }
 ]);
-AllergyIntollerances.attachSchema( ExtendedAllergyIntolleranceSchema );
+AllergyIntolerances.attachSchema( ExtendedAllergyIntoleranceSchema );
 ```
 
 
