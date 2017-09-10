@@ -54,6 +54,12 @@ AllergyIntolerances.attachSchema( ExtendedAllergyIntoleranceSchema );
 If you're working with HL7 FHIR Resources, we recommend using [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en).
 
 
+===============================
+#### References  
+
+[FDA - Food Allergies: What You Need To Know](https://www.fda.gov/food/resourcesforyou/consumers/ucm079311.htm)  
+[FDA - Food Facts](https://www.fda.gov/downloads/Food/ResourcesForYou/Consumers/UCM220117.pdf)  
+
 
 
 ===============================
