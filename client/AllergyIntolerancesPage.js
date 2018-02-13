@@ -1,0 +1,76 @@
+import { CardText, CardTitle } from 'material-ui/Card';
+import {Tab, Tabs} from 'material-ui/Tabs';
+import { GlassCard, VerticalCanvas, Glass } from 'meteor/clinical:glass-ui';
+
+import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
+import AllergyIntolerancesTable from './AllergyIntolerancesTable';
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
+import React  from 'react';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
+import ReactMixin  from 'react-mixin';
+
+export class AllergyIntolerancesPage extends React.Component {
+  getMeteorData() {
+    let data = {
+      style: {
+        opacity: Session.get('globalOpacity'),
+        tab: {
+          borderBottom: '1px solid lightgray',
+          borderRight: 'none'
+        }
+      },
+      tabIndex: Session.get('allergyIntolerancePageTabIndex'),
+      allergyIntoleranceSearchFilter: Session.get('allergyIntoleranceSearchFilter'),
+      currentAllergyIntolerance: Session.get('selectedAllergyIntolerance')
+    };
+
+    data.style = Glass.blur(data.style);
+    data.style.appbar = Glass.darkroom(data.style.appbar);
+    data.style.tab = Glass.darkroom(data.style.tab);
+
+    return data;
+  }
+
+  handleTabChange(index){
+    Session.set('allergyIntolerancePageTabIndex', index);
+  }
+
+  onNewTab(){
+    Session.set('selectedAllergyIntolerance', false);
+    Session.set('allergyIntoleranceUpsert', false);
+  }
+
+  render() {
+    if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
+    return (
+      <div id='allergyIntolerancesPage'>
+        <VerticalCanvas>
+          <GlassCard height='auto'>
+            <CardTitle title='Allergy Intolerances' />
+            <CardText>
+              <Tabs id="allergyIntolerancesPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
+               <Tab className='newAllergyIntoleranceTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
+                 <AllergyIntoleranceDetail id='newAllergyIntolerance' />
+               </Tab>
+               <Tab className="allergyIntoleranceListTab" label='AllergyIntolerances' onActive={this.handleActive} style={this.data.style.tab} value={1}>
+                <AllergyIntolerancesTable id='allergyIntolerancesTable' />
+               </Tab>
+               <Tab className="allergyIntoleranceDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
+                 <AllergyIntoleranceDetail 
+                  id='allergyIntoleranceDetails' 
+                  showDatePicker={true} 
+                  />
+               </Tab>
+             </Tabs>
+            </CardText>
+          </GlassCard>
+        </VerticalCanvas>
+      </div>
+    );
+  }
+}
+
+ReactMixin(AllergyIntolerancesPage.prototype, ReactMeteorData);
+
+export default AllergyIntolerancesPage;
