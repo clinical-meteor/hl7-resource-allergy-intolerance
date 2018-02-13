@@ -6,15 +6,15 @@ import { AllergyIntolerance, AllergyIntolerances, AllergyIntoleranceSchema } fro
 
 var DynamicRoutes = [{
   'name': 'AllergyIntolerancesPage',
-  'path': '/allergy-intolerance',
+  'path': '/allergies',
   'component': AllergyIntolerancesPage,
   'requireAuth': true
 }];
 
 var SidebarElements = [{
   'primaryText': 'Allergies & Intolerances',
-  'to': '/allergy-intolerance',
-  'href': '/allergy-intolerance'
+  'to': '/allergies',
+  'href': '/allergies'
 }];
 
 export { 
