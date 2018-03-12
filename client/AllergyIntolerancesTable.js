@@ -7,12 +7,11 @@ import { Table } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
-export default class AllergyIntolerancesTable extends React.Component {
+import { get } from 'lodash';
+
+export class AllergyIntolerancesTable extends React.Component {
 
   getMeteorData() {
-
-    // this should all be handled by props
-    // or a mixin!
     let data = {
       style: {
         opacity: Session.get('globalOpacity')
@@ -55,7 +54,6 @@ export default class AllergyIntolerancesTable extends React.Component {
         <td className="toggle">
             <Toggle
               defaultToggled={true}
-              //style={styles.toggle}
             />
           </td>
       );
@@ -96,29 +94,15 @@ export default class AllergyIntolerancesTable extends React.Component {
         evidenceDisplay: '',
         barcode: ''
       };
-      if (this.data.allergyIntolerances[i]){
 
-        if(this.data.allergyIntolerances[i].identifier && this.data.allergyIntolerances[i].identifier[0] && this.data.allergyIntolerances[i].identifier[0].value){
-          newRow.name = this.data.allergyIntolerances[i].identifier[0].value;
-        }
-        if(this.data.allergyIntolerances[i].clinicalStatus){
-          newRow.clinicalStatus = this.data.allergyIntolerances[i].clinicalStatus;
-        }
-        if(this.data.allergyIntolerances[i].verificationStatus){
-          newRow.verificationStatus = this.data.allergyIntolerances[i].verificationStatus;
-        }
-        if(this.data.allergyIntolerances[i].type){
-          newRow.type = this.data.allergyIntolerances[i].type;
-        }
-        if(this.data.allergyIntolerances[i].category && this.data.allergyIntolerances[i].category[0]){
-          newRow.category = this.data.allergyIntolerances[i].category[0];
-        }
-        if(this.data.allergyIntolerances[i].code){
-          if(this.data.allergyIntolerances[i].code.coding && this.data.allergyIntolerances[i].code.coding[0]){            
-            newRow.snomedCode = this.data.allergyIntolerances[i].code.coding[0].code;
-            newRow.snomedDisplay = this.data.allergyIntolerances[i].code.coding[0].display;
-          }
-        }    
+      newRow.name = get(this.data.allergyIntolerances[i], 'identifier[0].value');
+      newRow.clinicalStatus = get(this.data.allergyIntolerances[i], 'clinicalStatus');
+      newRow.verificationStatus = get(this.data.allergyIntolerances[i], 'verificationStatus');
+      newRow.type = get(this.data.allergyIntolerances[i], 'type');
+      newRow.category = get(this.data.allergyIntolerances[i], 'category[0]');
+      if(get(this.data.allergyIntolerances[i], 'code.coding[0]')){            
+        newRow.snomedCode = get(this.data.allergyIntolerances[i], 'code.coding[0].code');
+        newRow.snomedDisplay = get(this.data.allergyIntolerances[i], 'code.coding[0].display');
       }
 
       tableRows.push(
@@ -135,15 +119,15 @@ export default class AllergyIntolerancesTable extends React.Component {
     }
 
     return(
-      <Table id='allergyIntolerancesTable' responses hover >
+      <Table id='allergyIntolerancesTable' hover >
         <thead>
           <tr>
             { this.renderTogglesHeader(this.data.displayToggle) }
-            <th className='identifier'>name</th>
-            <th className='clinicalStatus'>status</th>
-            <th className='verificationStatus'>verification</th>
-            <th className='type'>type</th>
-            <th className='category'>category</th>
+            <th className='identifier'>Name</th>
+            <th className='clinicalStatus'>Status</th>
+            <th className='verificationStatus'>Verification</th>
+            <th className='type'>Type</th>
+            <th className='category'>Category</th>
             { this.renderDateHeader(this.data.displayDates) }
           </tr>
         </thead>
@@ -155,5 +139,5 @@ export default class AllergyIntolerancesTable extends React.Component {
   }
 }
 
-
 ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
+export default AllergyIntolerancesTable;

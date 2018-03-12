@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-resource-allergy-intolerance',
-  version: '1.1.1',
+  version: '1.1.5',
   summary: 'HL7 FHIR Resource - AllergyIntolerance',
   git: 'https://github.com/clinical-meteor/hl7-resource-allergy-intolerance',
   documentation: 'README.md'
@@ -28,7 +28,8 @@ Package.onUse(function (api) {
   api.use('clinical:hl7-resource-bundle@1.3.10');
   api.use('matb33:collection-hooks@0.7.15');
 
-  api.addFiles('lib/AllergyIntolerances.js', ['client', 'server']);
+  api.addFiles('lib/AllergyIntolerances.js');
+
   api.addFiles('server/rest.js', 'server');
   api.addFiles('server/initialize.js', 'server');
   api.addFiles('server/methods.js', 'server');

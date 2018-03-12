@@ -28,12 +28,10 @@ let defaultAllergyIntolerance = {
     "onsetDateTime": null
 };
 
-
 Session.setDefault('allergyIntoleranceUpsert', false);
 Session.setDefault('selectedAllergyIntolerance', false);
 
-
-export default class AllergyIntoleranceDetail extends React.Component {
+export class AllergyIntoleranceDetail extends React.Component {
   getMeteorData() {
     let data = {
       allergyIntoleranceId: false,
@@ -48,8 +46,6 @@ export default class AllergyIntoleranceDetail extends React.Component {
     if (Session.get('allergyIntoleranceUpsert')) {
       data.allergy = Session.get('allergyIntoleranceUpsert');
     } else {
-      // if (Session.get('selectedAllergyIntolerance')) {
-      //   data.allergyIntoleranceId = Session.get('selectedAllergyIntolerance');
         console.log("selectedAllergyIntolerance", Session.get('selectedAllergyIntolerance'));
 
         let selectedAllergyIntolerance = AllergyIntolerances.findOne({_id: Session.get('selectedAllergyIntolerance')});
@@ -58,9 +54,6 @@ export default class AllergyIntoleranceDetail extends React.Component {
         if (selectedAllergyIntolerance) {
           data.allergy = selectedAllergyIntolerance;
         }
-      // } else {
-      //   data.allergy = defaultAllergyIntolerance;
-      // }
     }
 
     if (Session.get('selectedAllergyIntolerance')) {
@@ -71,6 +64,9 @@ export default class AllergyIntoleranceDetail extends React.Component {
     return data;
   }
   renderDatePicker(showDatePicker, datePickerValue){
+    if (typeof datePickerValue === "string"){
+      datePickerValue = new Date(datePickerValue);
+    }
     if (showDatePicker) {
       return (
         <DatePicker 
@@ -78,7 +74,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
           hintText="Date of Confirmation" 
           container="inline" 
           mode="landscape"
-          value={ datePickerValue ? datePickerValue : ''}    
+          value={ datePickerValue ? datePickerValue : null}    
           onChange={ this.changeState.bind(this, 'datePicker')}      
           />
       );
@@ -93,7 +89,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='identifier'
             name='identifier'
             floatingLabelText='Identifier'            
-            value={ get(this, 'data.allergy.identifier[0].value') ? get(this, 'data.allergy.identifier[0].value'): ''}
+            value={ get(this, 'data.allergy.identifier[0].value', '') }
             onChange={ this.changeState.bind(this, 'identifier')}
             fullWidth
             /><br/>
@@ -103,7 +99,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='clinicalStatus'
             name='clinicalStatus'
             floatingLabelText='Clinical Status'
-            value={ get(this, 'data.allergy.clinicalStatus') ? get(this, 'data.allergy.clinicalStatus'): ''}
+            value={ get(this, 'data.allergy.clinicalStatus', '') }
             onChange={ this.changeState.bind(this, 'clinicalStatus')}
             fullWidth
             /><br/>
@@ -113,7 +109,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='verificationStatus'
             name='verificationStatus'
             floatingLabelText='Verification Status'
-            value={ get(this, 'data.allergy.verificationStatus') ? get(this, 'data.allergy.verificationStatus'): ''}
+            value={ get(this, 'data.allergy.verificationStatus', '') }
             onChange={ this.changeState.bind(this, 'verificationStatus')}
             fullWidth
             /><br/>            
@@ -123,7 +119,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='type'
             name='type'
             floatingLabelText='Type'
-            value={ get(this, 'data.allergy.type') ? get(this, 'data.allergy.type'): ''}
+            value={ get(this, 'data.allergy.type', '') }
             onChange={ this.changeState.bind(this, 'type')}
             fullWidth
             /><br/>
@@ -133,7 +129,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='category'
             name='category'
             floatingLabelText='Category'
-            value={ get(this, 'data.allergy.category') ? get(this, 'data.allergy.category'): ''}
+            value={ get(this, 'data.allergy.category', '') }
             onChange={ this.changeState.bind(this, 'category')}
             fullWidth
             /><br/>
@@ -143,7 +139,7 @@ export default class AllergyIntoleranceDetail extends React.Component {
             ref='patientDisplay'
             name='patientDisplay'
             floatingLabelText='Patient'
-            value={ get(this, 'data.allergy.patient.display')  ? get(this, 'data.allergy.patient.display')  : ''}
+            value={ get(this, 'data.allergy.patient.display', '') }
             onChange={ this.changeState.bind(this, 'patientDisplay')}
             fullWidth
             /><br/>
@@ -175,24 +171,6 @@ export default class AllergyIntoleranceDetail extends React.Component {
       'code': null,
       'patient': null,
       "onsetDateTime": allergyIntoleranceUpsert.onsetDateTime
-
-      // "resourceType": "Immunization",
-      // 'notGiven': true,
-      // 'identifier': [{
-      //   'use': 'official',
-      //   'type': {
-      //     'text': allergyIntoleranceUpsert.identifier
-      //   }
-      // }, {
-      //   'use': 'secondary',
-      //   'type': {
-      //     'text': allergyIntoleranceUpsert.vaccine
-      //   }
-      // }],
-      // 'vaccineCode': {
-      //   'text': allergyIntoleranceUpsert.vaccineCode
-      // },
-      // 'date': allergyIntoleranceUpsert.datePicker
     }
 
     console.log('Lets write this to the profile... ', newAllergy);
@@ -226,8 +204,6 @@ export default class AllergyIntoleranceDetail extends React.Component {
     }
   }
 
-
-
   // this could be a mixin
   changeState(field, event, value){
     let allergyUpdate;
@@ -240,8 +216,6 @@ export default class AllergyIntoleranceDetail extends React.Component {
     } else {
       allergyUpdate = defaultAllergyIntolerance;
     }
-
-
 
     // if there's an existing allergy, use them
     if (Session.get('selectedAllergyIntolerance')) {
@@ -351,8 +325,8 @@ export default class AllergyIntoleranceDetail extends React.Component {
   }
 }
 
-
 AllergyIntoleranceDetail.propTypes = {
   hasUser: PropTypes.object
 };
 ReactMixin(AllergyIntoleranceDetail.prototype, ReactMeteorData);
+export default AllergyIntoleranceDetail;
