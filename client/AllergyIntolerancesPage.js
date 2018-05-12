@@ -1,3 +1,11 @@
+// =======================================================================
+// Using DSTU2  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+// https://www.hl7.org/fhir/DSTU2/allergyintolerance.html
+//
+//
+// =======================================================================
+
 import { CardText, CardTitle } from 'material-ui/Card';
 import {Tab, Tabs} from 'material-ui/Tabs';
 import { GlassCard, VerticalCanvas, Glass } from 'meteor/clinical:glass-ui';
@@ -10,6 +18,8 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+
+Session.setDefault('fhirVersion', 'v1.0.2');
 export class AllergyIntolerancesPage extends React.Component {
   getMeteorData() {
     let data = {
@@ -22,7 +32,8 @@ export class AllergyIntolerancesPage extends React.Component {
       },
       tabIndex: Session.get('allergyIntolerancePageTabIndex'),
       allergyIntoleranceSearchFilter: Session.get('allergyIntoleranceSearchFilter'),
-      currentAllergyIntolerance: Session.get('selectedAllergyIntolerance')
+      currentAllergyIntolerance: Session.get('selectedAllergyIntolerance'),
+      fhirVersion: Session.get('fhirVersion')
     };
 
     data.style = Glass.blur(data.style);
@@ -54,7 +65,7 @@ export class AllergyIntolerancesPage extends React.Component {
                  <AllergyIntoleranceDetail id='newAllergyIntolerance' />
                </Tab>
                <Tab className="allergyIntoleranceListTab" label='AllergyIntolerances' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                <AllergyIntolerancesTable id='allergyIntolerancesTable' />
+                <AllergyIntolerancesTable id='allergyIntolerancesTable' fhirVersion={ this.data.fhirVersion } />
                </Tab>
                <Tab className="allergyIntoleranceDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
                  <AllergyIntoleranceDetail 

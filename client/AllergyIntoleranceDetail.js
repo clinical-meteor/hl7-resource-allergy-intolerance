@@ -1,3 +1,11 @@
+// =======================================================================
+// Using DSTU2  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+// https://www.hl7.org/fhir/DSTU2/allergyintolerance.html
+//
+//
+// =======================================================================
+
 import { CardActions, CardText } from 'material-ui/Card';
 
 import { Bert } from 'meteor/themeteorchef:bert';
@@ -94,7 +102,7 @@ export class AllergyIntoleranceDetail extends React.Component {
             fullWidth
             /><br/>
 
-            <TextField
+          <TextField
             id='clinicalStatusInput'
             ref='clinicalStatus'
             name='clinicalStatus'
@@ -104,7 +112,7 @@ export class AllergyIntoleranceDetail extends React.Component {
             fullWidth
             /><br/>
 
-            <TextField
+          <TextField
             id='verificationStatusInput'
             ref='verificationStatus'
             name='verificationStatus'
@@ -143,6 +151,33 @@ export class AllergyIntoleranceDetail extends React.Component {
             onChange={ this.changeState.bind(this, 'patientDisplay')}
             fullWidth
             /><br/>
+          <TextField
+            id='recorderDisplayInput'
+            ref='recorderDisplay'
+            name='recorderDisplay'
+            floatingLabelText='Recorder'
+            value={ get(this, 'data.allergy.recorder.display', '') }
+            onChange={ this.changeState.bind(this, 'recorderDisplay')}
+            fullWidth
+            /><br/>
+          <TextField
+            id='reactionInput'
+            ref='reaction'
+            name='reaction'
+            floatingLabelText='Reaction'
+            value={ get(this, 'data.allergy.reaction', '') }
+            onChange={ this.changeState.bind(this, 'reaction')}
+            fullWidth
+            /><br/>
+          <TextField
+            id='criticalityInput'
+            ref='criticality'
+            name='criticality'
+            floatingLabelText='Criticality'
+            value={ get(this, 'data.allergy.criticality', '') }
+            onChange={ this.changeState.bind(this, 'criticality')}
+            fullWidth
+            /><br/>            
 
           <br/>
           { this.renderDatePicker(this.data.showDatePicker, get(this, 'data.allergy.onsetDateTime') ) }
@@ -161,30 +196,31 @@ export class AllergyIntoleranceDetail extends React.Component {
 
     var allergyIntoleranceUpsert = Session.get('allergyIntoleranceUpsert');
 
-    var newAllergy = {
-      "resourceType": "AllergyIntolerance",
-      'identifier': allergyIntoleranceUpsert.identifier,
-      'clinicalStatus': allergyIntoleranceUpsert.clinicalStatus,
-      'verificationStatus': allergyIntoleranceUpsert.verificationStatus,
-      'type': allergyIntoleranceUpsert.type,
-      'category': allergyIntoleranceUpsert.category,
-      'code': null,
-      'patient': null,
-      "onsetDateTime": allergyIntoleranceUpsert.onsetDateTime
-    }
+    alert('Temporarily disabled')
+    // var newAllergy = {
+    //   "resourceType": "AllergyIntolerance",
+    //   'identifier': allergyIntoleranceUpsert.identifier,
+    //   'clinicalStatus': allergyIntoleranceUpsert.clinicalStatus,
+    //   'verificationStatus': allergyIntoleranceUpsert.verificationStatus,
+    //   'type': allergyIntoleranceUpsert.type,
+    //   'category': allergyIntoleranceUpsert.category,
+    //   'code': null,
+    //   'patient': null,
+    //   "onsetDateTime": allergyIntoleranceUpsert.onsetDateTime
+    // }
 
-    console.log('Lets write this to the profile... ', newAllergy);
+    // console.log('Lets write this to the profile... ', newAllergy);
 
-    Meteor.users.update({_id: Meteor.userId()}, {$addToSet: {
-      'profile.continuityOfCare.allergyIntolerances': newAllergy
-    }}, function(error, result){
-      if(error){
-        console.log('error', error);
-      }
-      if(result){
-        browserHistory.push('/continuity-of-care');
-      }
-    });
+    // Meteor.users.update({_id: Meteor.userId()}, {$addToSet: {
+    //   'profile.continuityOfCare.allergyIntolerances': newAllergy
+    // }}, function(error, result){
+    //   if(error){
+    //     console.log('error', error);
+    //   }
+    //   if(result){
+    //     browserHistory.push('/continuity-of-care');
+    //   }
+    // });
   }
 
   determineButtons(allergyId){
@@ -238,6 +274,9 @@ export class AllergyIntoleranceDetail extends React.Component {
       case "type":
         allergyUpdate.type = value;
         break;
+      case "reaction":
+        allergyUpdate.reaction = value;
+        break;
       case "category":
         allergyUpdate.category = [value];
         break;
@@ -246,8 +285,16 @@ export class AllergyIntoleranceDetail extends React.Component {
           display: value
         }
         break;
+      case "recorderDisplay":
+        allergyUpdate.recorder = {
+          display: value
+        }
+        break;
       case "datePicker":
         allergyUpdate.onsetDateTime = value;
+        break;
+        case "criticality":
+        allergyUpdate.criticality = value;
         break;
   
       default:
