@@ -57,6 +57,7 @@ export class AllergyIntolerancesTable extends React.Component {
       data.displayCategory = this.props.displayCategory;
     }
     if(this.props.fhirVersion){
+      data.fhirVersion = this.props.fhirVersion;
       switch (this.props.fhirVersion) {
         case 'v1.0.2':
             data.displayToggle = false;

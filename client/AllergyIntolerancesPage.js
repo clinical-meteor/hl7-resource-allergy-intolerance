@@ -71,6 +71,7 @@ export class AllergyIntolerancesPage extends React.Component {
                  <AllergyIntoleranceDetail 
                   id='allergyIntoleranceDetails' 
                   showDatePicker={true} 
+                  fhirVersion={ this.data.fhirVersion }
                   />
                </Tab>
              </Tabs>
