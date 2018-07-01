@@ -2,6 +2,7 @@
 
 import AllergyIntolerancesPage from './client/AllergyIntolerancesPage';
 import AllergyIntolerancesTable from './client/AllergyIntolerancesTable';
+import AllergyIntoleranceDetail from './client/AllergyIntoleranceDetail';
 // import { AllergyIntolerance, AllergyIntolerances, AllergyIntoleranceSchema } from './lib/AllergyIntolerances';
 
 var DynamicRoutes = [{
@@ -22,7 +23,8 @@ export {
   DynamicRoutes, 
 
   AllergyIntolerancesPage,
-  AllergyIntolerancesTable
+  AllergyIntolerancesTable,
+  AllergyIntoleranceDetail
 };
 
 
