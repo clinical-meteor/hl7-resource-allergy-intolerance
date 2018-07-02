@@ -112,7 +112,7 @@ jobs:
     - run: cd baseline && meteor add dispatch:mocha practicalmeteor:chai
     - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
     - run: cd baseline && mkdir imports 
-    - run: cd baseline && cp ../tests/Patients.tests.js imports/
+    - run: cd baseline && cp ../tests/AllergyIntolerances.tests.js imports/
 
 
     #- run the app
