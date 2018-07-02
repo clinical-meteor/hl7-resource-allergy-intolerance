@@ -10,7 +10,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/clinical-meteor
+    working_directory: ~/clinical-meteor/hl7-resource-allergy-intolerance
     parallelism: 1
     shell: /bin/bash --login
 
@@ -70,6 +70,11 @@ jobs:
 
     - run: pwd
     - run: ls -la
+
+    - run: cd ..
+    - run: pwd
+    - run: ls -la
+
     
 
     # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
