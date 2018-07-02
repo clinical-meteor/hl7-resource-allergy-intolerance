@@ -15,5 +15,4 @@ describe('clinical:hl7-resources-allergy-intolerance', function () {
       expect(AllergyIntolerances).to.exist;
     });
   });
-
 });
