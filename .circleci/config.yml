@@ -101,20 +101,10 @@ jobs:
     - run: ls -la
 
     - run: cd baseline && ls -la
-    # - run: cd baseline/client && rm main.*
-
-    # - run: cd baseline && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
-    # - run: cd baseline && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
-    # - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
-    # - run: cd baseline/packages && ls -la
-    # - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
-    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests && ls -la
-    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
-    # - run: cd baseline && starrynight autoconfig
 
     - run: cd baseline && meteor npm install
     - run: cd baseline && mkdir packages
-    - run: cp -R clinical:hl7-resource-allergy-intolerance baseline/packages
+    - run: cp -R hl7-resource-allergy-intolerance baseline/packages
     - run: cd baseline/packages/hl7-resource-allergy-intolerance && pwd
     - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
 
