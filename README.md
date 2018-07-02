@@ -1,11 +1,11 @@
-##clinical:hl7-resource-allergy-intolerance
+## clinical:hl7-resource-allergy-intolerance
 
 #### Licensing  
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 
-#### Integration & Verification Tests
+#### Integration & Verification Tests  
 
 [![CircleCI](https://circleci.com/gh/clinical-meteor/hl7-resource-allergy-intolerance/tree/master.svg?style=svg)](https://circleci.com/gh/clinical-meteor/hl7-resource-allergy-intolerance/tree/master)
 
