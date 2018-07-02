@@ -123,7 +123,7 @@ jobs:
     #- run the app
     - run: 
         name: Starting Meteor
-        command: cd baseline && meteor test --once --driver-package dispatch:mocha
+        command: cd ../baseline && meteor test --once --driver-package dispatch:mocha
         no_output_timeout: 10m
         when: on_success    # always, on_success, on_fail 
 
