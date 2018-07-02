@@ -89,32 +89,32 @@ jobs:
     # - run: npm install starrynight
 
     # Create a baseline app
-    - run: meteor create --release METEOR@1.6.0.1 --bare  
-    - run: git clone https://github.com/meteor/todos -b react
+    - run: meteor create --release METEOR@1.6.0.1 --bare baseline
+    # - run: git clone https://github.com/meteor/todos -b react
 
     - run: meteor --version
     - run: ls -la
 
     - run: cd todos-react
 
-    - run: cd todos-react && ls -la
-    # - run: cd todos-react/client && rm main.*
+    - run: cd baseline && ls -la
+    # - run: cd baseline/client && rm main.*
 
-    # - run: cd todos-react && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
-    # - run: cd todos-react && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
-    # - run: cd todos-react && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
-    # - run: cd todos-react/packages && ls -la
-    # - run: cd todos-react/packages/hl7-resource-allergy-intolerance && ls -la
-    # - run: cd todos-react/packages/hl7-resource-allergy-intolerance/tests && ls -la
-    # - run: cd todos-react/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
-    # - run: cd todos-react && starrynight autoconfig
+    # - run: cd baseline && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
+    # - run: cd baseline && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
+    # - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
+    # - run: cd baseline/packages && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
+    # - run: cd baseline && starrynight autoconfig
 
-    - run: cd todos-react && meteor npm install
-    - run: cd todos-react && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
-    - run: cd todos-react && meteor add dispatch:mocha practicalmeteor:chai
-    - run: cd todos-react && meteor add clinical:hl7-resource-allergy-intolerance 
-    - run: cd todos-react && mkdir imports 
-    - run: cp tests/AllergyIntolerances.tests.js todos-react/imports/
+    - run: cd baseline && meteor npm install
+    - run: cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+    - run: cd baseline && meteor add dispatch:mocha practicalmeteor:chai
+    - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
+    - run: cd baseline && mkdir imports 
+    - run: cp tests/AllergyIntolerances.tests.js baseline/imports/
 
 
     #- run the app
