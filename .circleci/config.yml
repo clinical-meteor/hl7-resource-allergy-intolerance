@@ -91,8 +91,10 @@ jobs:
     # Create a baseline app
     - run: meteor create --release METEOR@1.6.0.1 --example todos-react
 
-    - run: cd todos-react
     - run: meteor --version
+    - run: ls -la
+
+    - run: cd todos-react
 
     - run: cd todos-react && ls -la
     # - run: cd todos-react/client && rm main.*
