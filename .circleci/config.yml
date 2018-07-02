@@ -113,6 +113,7 @@ jobs:
     # - run: cd baseline && starrynight autoconfig
 
     - run: cd baseline && meteor npm install
+    - run: cd baseline && mkdir packages
     - run: cp -R clinical:hl7-resource-allergy-intolerance baseline/packages
     - run: cd baseline/packages/hl7-resource-allergy-intolerance && pwd
     - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
