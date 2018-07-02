@@ -1,3 +1,5 @@
+// Integration Tests  
+
 describe('clinical:hl7-resources-allergy-intolerance', function () {
   var server = meteor();
   var client = browser(server);

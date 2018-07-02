@@ -73,8 +73,10 @@ jobs:
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
 
+
     # Install  Meteor
-    - run: mkdir -p .meteor
+    # - run: mkdir -p .meteor
+    - run: mkdir -p ${HOME}/.meteor
     
     # If Meteor is already cached, do not need to build it again.
     - run: if [ ! -e .meteor/meteor ]; then curl https://install.meteor.com?=release=1.6.0.1 | /bin/sh; else echo "Meteor seems to be cached"; fi;
@@ -82,49 +84,44 @@ jobs:
     # Link the meteor executable into /usr/bin
     - run: sudo ln -s .meteor/meteor /usr/bin/meteor
 
-    # Lets see if we can get some config info 
-    - run: meteor --version
 
-    # Install Starrynight unless it is cached
-    - run: npm install starrynight
+    # # Install Starrynight unless it is cached
+    # - run: npm install starrynight
 
     # Create a baseline app
     - run: meteor create --release METEOR@1.6.0.1 baseline
+    # Lets see if we can get some config info 
+
     - run: cd baseline
+    - run: meteor --version
+
     - run: cd baseline && ls -la
     - run: cd baseline/client && rm main.*
-    - run: cd baseline && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
-    - run: cd baseline && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
-    - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
-    - run: cd baseline/packages && ls -la
-    - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
-    - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests && ls -la
-    - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
-    - run: cd baseline && starrynight autoconfig
+    
+    # - run: cd baseline && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
+    # - run: cd baseline && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
+    # - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
+    # - run: cd baseline/packages && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests && ls -la
+    # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
+    # - run: cd baseline && starrynight autoconfig
+
+    - cd baseline && meteor npm install
+    - cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+    - cd baseline && meteor add dispatch:mocha practicalmeteor:chai
+    - cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
+    - cd baseline && mkdir imports 
+    - cd baseline && cp ../tests/Patients.tests.js imports/
+
 
     #- run the app
     - run: 
         name: Starting Meteor
-        command: cd baseline && meteor | tee meteor-output.log
-        background: true
+        command: cd baseline && meteor test --once --driver-package dispatch:mocha
         no_output_timeout: 10m
         when: on_success    # always, on_success, on_fail 
 
-    - run: 
-        name: Running verification tests
-        command: cd baseline && starrynight run-tests --type package-verification
-        no_output_timeout: 10m
-        when: on_success    # always, on_success, on_fail 
-
-
-    # # Save dependency cache
-    # - save_cache:
-    #     name: Saving cache
-    #     key: v1-dep-{{ .Branch }}-{{ epoch }}
-    #     paths:
-    #     # This is a broad list of cache paths to include many possible development environments
-    #     # You can probably delete some of these entries
-    #     - ~/.meteor
 
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
