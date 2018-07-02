@@ -8,7 +8,7 @@
 
 import { CardActions, CardText } from 'material-ui/Card';
 
-import { Bert } from 'meteor/themeteorchef:bert';
+import { Bert } from 'meteor/clinical:alert';
 import DatePicker from 'material-ui/DatePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Meteor } from 'meteor/meteor';
