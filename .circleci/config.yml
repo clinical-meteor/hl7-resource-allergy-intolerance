@@ -10,7 +10,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/clinical-meteor/hl7-resource-allergy-intolerance
+    working_directory: ~/clinical-meteor
     parallelism: 1
     shell: /bin/bash --login
 
@@ -68,6 +68,10 @@ jobs:
     # The following `checkout` command checks out your code to your working directory. In 1.0 we did this implicitly. In 2.0 you can choose where in the course of a job your code should be checked out.
     - checkout
 
+    - run: pwd
+    - run: ls -la
+    
+
     # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
     # In many cases you can simplify this from what is generated here.
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
@@ -84,6 +88,7 @@ jobs:
     # Link the meteor executable into /usr/bin
     - run: sudo ln -s .meteor/meteor /usr/bin/meteor
 
+    - run: meteor --version
 
     # # Install Starrynight unless it is cached
     # - run: npm install starrynight
@@ -92,10 +97,8 @@ jobs:
     - run: meteor create --release METEOR@1.6.0.1 --bare baseline
     # - run: git clone https://github.com/meteor/todos -b react
 
-    - run: meteor --version
+    - run: cd baseline && meteor --version
     - run: ls -la
-
-    - run: cd todos-react
 
     - run: cd baseline && ls -la
     # - run: cd baseline/client && rm main.*
@@ -110,6 +113,10 @@ jobs:
     # - run: cd baseline && starrynight autoconfig
 
     - run: cd baseline && meteor npm install
+    - run: cp -R clinical:hl7-resource-allergy-intolerance baseline/packages
+    - run: cd baseline/packages/hl7-resource-allergy-intolerance && pwd
+    - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
+
     - run: cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
     - run: cd baseline && meteor add dispatch:mocha practicalmeteor:chai
     - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
