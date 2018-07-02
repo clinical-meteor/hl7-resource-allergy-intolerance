@@ -97,7 +97,7 @@ jobs:
 
     - run: cd baseline && ls -la
     - run: cd baseline/client && rm main.*
-    
+
     # - run: cd baseline && meteor add anti:gagarin@0.4.12 session meteor-platform clinical:theming clinical:default-theme clinical:router clinical:router-default-config clinical:active-layout clinical:active-layout-reset clinical:active-layout-pagescreen-config grove:less
     # - run: cd baseline && git clone http://github.com/clinical-meteor/hl7-resource-allergy-intolerance packages/hl7-resource-allergy-intolerance
     # - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance clinical:hl7-resource-datatypes
@@ -107,12 +107,12 @@ jobs:
     # - run: cd baseline/packages/hl7-resource-allergy-intolerance/tests/gagarin && ls -la
     # - run: cd baseline && starrynight autoconfig
 
-    - cd baseline && meteor npm install
-    - cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
-    - cd baseline && meteor add dispatch:mocha practicalmeteor:chai
-    - cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
-    - cd baseline && mkdir imports 
-    - cd baseline && cp ../tests/Patients.tests.js imports/
+    - run: cd baseline && meteor npm install
+    - run: cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+    - run: cd baseline && meteor add dispatch:mocha practicalmeteor:chai
+    - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
+    - run: cd baseline && mkdir imports 
+    - run: cd baseline && cp ../tests/Patients.tests.js imports/
 
 
     #- run the app
