@@ -89,7 +89,8 @@ jobs:
     # - run: npm install starrynight
 
     # Create a baseline app
-    - run: meteor create --release METEOR@1.6.0.1 --example todos-react
+    - run: meteor create --release METEOR@1.6.0.1 --bare
+    - run: git clone https://github.com/meteor/todos -b react
 
     - run: meteor --version
     - run: ls -la
