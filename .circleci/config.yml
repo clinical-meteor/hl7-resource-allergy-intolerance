@@ -72,52 +72,52 @@ jobs:
     - run: ls -la
 
     - run: cd ..
-    - run: pwd
-    - run: ls -la
+    - run: cd .. && pwd
+    - run: cd .. && ls -la
 
     
 
     # Prepare for artifact and test results  collection equivalent to how it was done on 1.0.
     # In many cases you can simplify this from what is generated here.
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
-    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+    - run: cd .. && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
 
 
     # Install  Meteor
     # - run: mkdir -p .meteor
-    - run: mkdir -p ${HOME}/.meteor
+    - run: cd .. && mkdir -p ${HOME}/.meteor
     
     # If Meteor is already cached, do not need to build it again.
-    - run: if [ ! -e .meteor/meteor ]; then curl https://install.meteor.com?=release=1.6.0.1 | /bin/sh; else echo "Meteor seems to be cached"; fi;
+    - run: cd .. && if [ ! -e .meteor/meteor ]; then curl https://install.meteor.com?=release=1.6.0.1 | /bin/sh; else echo "Meteor seems to be cached"; fi;
 
     # Link the meteor executable into /usr/bin
-    - run: sudo ln -s .meteor/meteor /usr/bin/meteor
+    - run: cd .. && sudo ln -s .meteor/meteor /usr/bin/meteor
 
-    - run: meteor --version
+    - run: cd .. && meteor --version
 
     # # Install Starrynight unless it is cached
     # - run: npm install starrynight
 
     # Create a baseline app
-    - run: meteor create --release METEOR@1.6.0.1 --bare baseline
+    - run: cd .. && meteor create --release METEOR@1.6.0.1 --bare baseline
     # - run: git clone https://github.com/meteor/todos -b react
 
-    - run: cd baseline && meteor --version
+    - run: cd ../baseline && meteor --version
     - run: ls -la
 
-    - run: cd baseline && ls -la
+    - run: cd ../baseline && ls -la
 
-    - run: cd baseline && meteor npm install
-    - run: cd baseline && mkdir packages
-    - run: cp -R hl7-resource-allergy-intolerance baseline/packages
-    - run: cd baseline/packages/hl7-resource-allergy-intolerance && pwd
-    - run: cd baseline/packages/hl7-resource-allergy-intolerance && ls -la
+    - run: cd ../baseline && meteor npm install
+    - run: cd ../baseline && mkdir packages
+    - run: cp -R hl7-resource-allergy-intolerance ../baseline/packages
+    - run: cd ../baseline/packages/hl7-resource-allergy-intolerance && pwd
+    - run: cd ../baseline/packages/hl7-resource-allergy-intolerance && ls -la
 
-    - run: cd baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
-    - run: cd baseline && meteor add dispatch:mocha practicalmeteor:chai
-    - run: cd baseline && meteor add clinical:hl7-resource-allergy-intolerance 
-    - run: cd baseline && mkdir imports 
-    - run: cp tests/AllergyIntolerances.tests.js baseline/imports/
+    - run: cd ../baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+    - run: cd ../baseline && meteor add dispatch:mocha practicalmeteor:chai
+    - run: cd ../baseline && meteor add clinical:hl7-resource-allergy-intolerance 
+    - run: cd ../baseline && mkdir imports 
+    - run: cp tests/AllergyIntolerances.tests.js ../baseline/imports/
 
 
     #- run the app
