@@ -12,7 +12,7 @@
 
 #### API Reference  
 
-This package implements the FHIR List resource schema provided at  [https://www.hl7.org/fhir/allergyintolerance.html](https://www.hl7.org/fhir/allergyintolerance.html).  
+This package implements the FHIR List resource schema provided at  [https://www.hl7.org/fhir/DSTU2/allergyintolerance.html](https://www.hl7.org/fhir/DSTU2/allergyintolerance.html).  
 
 
 #### Installation  
