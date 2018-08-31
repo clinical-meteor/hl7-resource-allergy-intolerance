@@ -33,7 +33,10 @@ let defaultAllergyIntolerance = {
     'category': ['food'],
     'code': null,
     'patient': null,
-    "onsetDateTime": null
+    "onsetDateTime": null,
+    "reaction": [{
+      "description": ""
+    }]
 };
 
 Session.setDefault('allergyIntoleranceUpsert', false);
@@ -164,8 +167,8 @@ export class AllergyIntoleranceDetail extends React.Component {
             id='reactionInput'
             ref='reaction'
             name='reaction'
-            floatingLabelText='Reaction'
-            value={ get(this, 'data.allergy.reaction', '') }
+            floatingLabelText='Reaction Description'
+            value={ get(this, 'data.allergy.reaction[0].description', '') }
             onChange={ this.changeState.bind(this, 'reaction')}
             fullWidth
             /><br/>
@@ -275,7 +278,9 @@ export class AllergyIntoleranceDetail extends React.Component {
         allergyUpdate.type = value;
         break;
       case "reaction":
-        allergyUpdate.reaction = value;
+        allergyUpdate.reaction = [{
+          description: value
+        }];
         break;
       case "category":
         allergyUpdate.category = [value];
@@ -309,7 +314,6 @@ export class AllergyIntoleranceDetail extends React.Component {
     let allergyIntoleranceUpdate = Session.get('allergyIntoleranceUpsert');
 
     if(process.env.NODE_ENV === "test") console.log("allergyIntoleranceUpdate", allergyIntoleranceUpdate);
-
 
     if (Session.get('selectedAllergyIntolerance')) {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
