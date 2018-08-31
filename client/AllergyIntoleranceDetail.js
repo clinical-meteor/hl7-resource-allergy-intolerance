@@ -6,17 +6,15 @@
 //
 // =======================================================================
 
-import { CardActions, CardText } from 'material-ui/Card';
+import { CardActions, CardText, DatePicker, RaisedButton, TextField } from 'material-ui';
+import { Col, Grid, Row } from 'react-bootstrap';
 
 import { Bert } from 'meteor/clinical:alert';
-import DatePicker from 'material-ui/DatePicker';
-import RaisedButton from 'material-ui/RaisedButton';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import TextField from 'material-ui/TextField';
 import { browserHistory } from 'react-router';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -28,7 +26,7 @@ let defaultAllergyIntolerance = {
       'value': ''
     }],
     'clinicalStatus': 'active',
-    'verificationStatus': 'confirmed',
+    'verificationStatus': '',
     'type': 'allergy',
     'category': ['food'],
     'code': null,
@@ -95,92 +93,118 @@ export class AllergyIntoleranceDetail extends React.Component {
     return (
       <div id={this.props.id} className="allergyIntoleranceDetail">
         <CardText>
-          <TextField
-            id='identifierInput'
-            ref='identifier'
-            name='identifier'
-            floatingLabelText='Identifier'            
-            value={ get(this, 'data.allergy.identifier[0].value', '') }
-            onChange={ this.changeState.bind(this, 'identifier')}
-            fullWidth
-            /><br/>
+          <Row>
+            <Col md={3} >
+              <TextField
+                id='clinicalStatusInput'
+                ref='clinicalStatus'
+                name='clinicalStatus'
+                floatingLabelText='Clinical Status'
+                value={ get(this, 'data.allergy.clinicalStatus', '') }
+                onChange={ this.changeState.bind(this, 'clinicalStatus')}
+                hintText="active"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>  
+            </Col>
+            <Col md={3} >
+              <TextField
+                id='verificationStatusInput'
+                ref='verificationStatus'
+                name='verificationStatus'
+                floatingLabelText='Verification Status'
+                value={ get(this, 'data.allergy.verificationStatus', '') }
+                onChange={ this.changeState.bind(this, 'verificationStatus')}
+                hintText="confirmed"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>  
+            </Col>
 
-          <TextField
-            id='clinicalStatusInput'
-            ref='clinicalStatus'
-            name='clinicalStatus'
-            floatingLabelText='Clinical Status'
-            value={ get(this, 'data.allergy.clinicalStatus', '') }
-            onChange={ this.changeState.bind(this, 'clinicalStatus')}
-            fullWidth
-            /><br/>
+            <Col md={3} >
+              <TextField
+                id='categoryInput'
+                ref='category'
+                name='category'
+                floatingLabelText='Category'
+                value={ get(this, 'data.allergy.category', '') }
+                onChange={ this.changeState.bind(this, 'category')}
+                hintText="food"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+            <Col md={3} >
+              <TextField
+                id='typeInput'
+                ref='type'
+                name='type'
+                floatingLabelText='Type'
+                value={ get(this, 'data.allergy.type', '') }
+                onChange={ this.changeState.bind(this, 'type')}
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+          </Row>
 
-          <TextField
-            id='verificationStatusInput'
-            ref='verificationStatus'
-            name='verificationStatus'
-            floatingLabelText='Verification Status'
-            value={ get(this, 'data.allergy.verificationStatus', '') }
-            onChange={ this.changeState.bind(this, 'verificationStatus')}
-            fullWidth
-            /><br/>            
+          <Row>
+            <Col md={4} >
+              <TextField
+                id='identifierInput'
+                ref='identifier'
+                name='identifier'
+                floatingLabelText='Identifier'            
+                value={ get(this, 'data.allergy.identifier[0].value', '') }
+                onChange={ this.changeState.bind(this, 'identifier')}
+                hintText="Shellfish"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+            <Col md={4} >
+              <TextField
+                id='reactionInput'
+                ref='reaction'
+                name='reaction'
+                floatingLabelText='Reaction Description'
+                value={ get(this, 'data.allergy.reaction[0].description', '') }
+                onChange={ this.changeState.bind(this, 'reaction')}
+                hintText="Hives"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+            <Col md={4} >
+              <TextField
+                id='criticalityInput'
+                ref='criticality'
+                name='criticality'
+                floatingLabelText='Criticality'
+                value={ get(this, 'data.allergy.criticality', '') }
+                onChange={ this.changeState.bind(this, 'criticality')}
+                hintText="Severe"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>   
+            </Col>            
+          </Row>
+          <Row>
+            <Col md={4} >
+              <TextField
+                id='patientDisplayInput'
+                ref='patientDisplay'
+                name='patientDisplay'
+                floatingLabelText='Patient'
+                value={ get(this, 'data.allergy.patient.display', '') }
+                onChange={ this.changeState.bind(this, 'patientDisplay')}
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+          </Row>
 
-          <TextField
-            id='typeInput'
-            ref='type'
-            name='type'
-            floatingLabelText='Type'
-            value={ get(this, 'data.allergy.type', '') }
-            onChange={ this.changeState.bind(this, 'type')}
-            fullWidth
-            /><br/>
 
-          <TextField
-            id='categoryInput'
-            ref='category'
-            name='category'
-            floatingLabelText='Category'
-            value={ get(this, 'data.allergy.category', '') }
-            onChange={ this.changeState.bind(this, 'category')}
-            fullWidth
-            /><br/>
-
-          <TextField
-            id='patientDisplayInput'
-            ref='patientDisplay'
-            name='patientDisplay'
-            floatingLabelText='Patient'
-            value={ get(this, 'data.allergy.patient.display', '') }
-            onChange={ this.changeState.bind(this, 'patientDisplay')}
-            fullWidth
-            /><br/>
-          <TextField
-            id='recorderDisplayInput'
-            ref='recorderDisplay'
-            name='recorderDisplay'
-            floatingLabelText='Recorder'
-            value={ get(this, 'data.allergy.recorder.display', '') }
-            onChange={ this.changeState.bind(this, 'recorderDisplay')}
-            fullWidth
-            /><br/>
-          <TextField
-            id='reactionInput'
-            ref='reaction'
-            name='reaction'
-            floatingLabelText='Reaction Description'
-            value={ get(this, 'data.allergy.reaction[0].description', '') }
-            onChange={ this.changeState.bind(this, 'reaction')}
-            fullWidth
-            /><br/>
-          <TextField
-            id='criticalityInput'
-            ref='criticality'
-            name='criticality'
-            floatingLabelText='Criticality'
-            value={ get(this, 'data.allergy.criticality', '') }
-            onChange={ this.changeState.bind(this, 'criticality')}
-            fullWidth
-            /><br/>            
 
           <br/>
           { this.renderDatePicker(this.data.showDatePicker, get(this, 'data.allergy.onsetDateTime') ) }
