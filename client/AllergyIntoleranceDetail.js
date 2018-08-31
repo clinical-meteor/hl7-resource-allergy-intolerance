@@ -6,7 +6,7 @@
 //
 // =======================================================================
 
-import { CardActions, CardText, DatePicker, RaisedButton, TextField } from 'material-ui';
+import { CardActions, CardText, DatePicker, RaisedButton, TextField, SelectField, MenuItem } from 'material-ui';
 import { Col, Grid, Row } from 'react-bootstrap';
 
 import { Bert } from 'meteor/clinical:alert';
@@ -34,7 +34,8 @@ let defaultAllergyIntolerance = {
     "onsetDateTime": null,
     "reaction": [{
       "description": ""
-    }]
+    }],
+    "criticality": 'high'
 };
 
 Session.setDefault('allergyIntoleranceUpsert', false);
@@ -43,6 +44,11 @@ Session.setDefault('selectedAllergyIntolerance', false);
 export class AllergyIntoleranceDetail extends React.Component {
   getMeteorData() {
     let data = {
+      clinicalStatus: 0,
+      verificationStatus: 0,
+      category: 0,
+      type: 0,
+      criticality: 0,
       allergyIntoleranceId: false,
       allergy: defaultAllergyIntolerance,
       showDatePicker: false      
@@ -54,6 +60,70 @@ export class AllergyIntoleranceDetail extends React.Component {
 
     if (Session.get('allergyIntoleranceUpsert')) {
       data.allergy = Session.get('allergyIntoleranceUpsert');
+
+      switch (get(data.allergy, 'clinicalStatus')) {
+        case 'active':
+          data.clinicalStatus = 0;  
+          break;
+        case 'inactive':
+          data.clinicalStatus = 1;         
+          break;
+        case 'resolved':
+          data.clinicalStatus = 2;     
+          break;      
+      }
+
+      switch (get(data.allergy, 'verificationStatus')) {
+        case 'unconfirmed':
+          data.verificationStatus = 0;  
+          break;
+        case 'confirmed':
+          data.verificationStatus = 1;         
+          break;
+        case 'refuted':
+          data.verificationStatus = 2;     
+          break;      
+        case 'entered-in-error':
+          data.verificationStatus = 3;     
+          break;      
+      }
+
+      switch (get(data.allergy, 'category')) {
+        case 'food':
+          data.category = 0;  
+          break;
+        case 'medication':
+          data.category = 1;         
+          break;
+        case 'environment':
+          data.category = 2;     
+          break;      
+        case 'biologic':
+          data.category = 3;     
+          break;      
+      }
+
+      switch (get(data.allergy, 'category')) {
+        case 'allergy':
+          data.type = 0;  
+          break;
+        case 'intollerance':
+          data.type = 1;         
+          break;
+      }
+
+      switch (get(data.allergy, 'criticality')) {
+        case 'low':
+          data.criticality = 0;  
+          break;
+        case 'high':
+          data.criticality = 1;         
+          break;
+        case 'unable-to-assess':
+          data.criticality = 2;     
+          break;      
+      }
+
     } else {
         console.log("selectedAllergyIntolerance", Session.get('selectedAllergyIntolerance'));
 
@@ -68,6 +138,7 @@ export class AllergyIntoleranceDetail extends React.Component {
     if (Session.get('selectedAllergyIntolerance')) {
       data.allergyIntoleranceId = Session.get('selectedAllergyIntolerance');
     }  
+
 
     console.log('AllergyIntoleranceDetail[data]', data);
     return data;
@@ -95,47 +166,101 @@ export class AllergyIntoleranceDetail extends React.Component {
         <CardText>
           <Row>
             <Col md={3} >
-              <TextField
+              <SelectField
                 id='clinicalStatusInput'
                 ref='clinicalStatus'
                 name='clinicalStatus'
                 floatingLabelText='Clinical Status'
-                value={ get(this, 'data.allergy.clinicalStatus', '') }
+                value={this.data.clinicalStatus}
                 onChange={ this.changeState.bind(this, 'clinicalStatus')}
-                hintText="active"
                 floatingLabelFixed={true}
                 fullWidth
-                /><br/>  
+              >
+                <MenuItem value={0} primaryText="active" />
+                <MenuItem value={1} primaryText="inactive" />
+                <MenuItem value={2} primaryText="resolved" />
+              </SelectField>
+
+              {/* <TextField
+                value={ get(this, 'data.allergy.clinicalStatus', '') }
+                // onChange={ this.changeState.bind(this, 'clinicalStatus')}
+                // hintText="active | inactive | resolved'"
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>   */}
             </Col>
             <Col md={3} >
-              <TextField
+              <SelectField
+                id='verificationStatusInput'
+                ref='verificationStatus'
+                name='verificationStatus'
+                floatingLabelText='Verification Status'
+                value={this.data.verificationStatus}
+                onChange={ this.changeState.bind(this, 'verificationStatus')}
+                floatingLabelFixed={true}
+                fullWidth
+              >
+                <MenuItem value={0} primaryText="unconfirmed" />
+                <MenuItem value={1} primaryText="confirmed" />
+                <MenuItem value={2} primaryText="refuted" />
+                <MenuItem value={3} primaryText="entered-in-error" />
+              </SelectField>
+              {/* <TextField
                 id='verificationStatusInput'
                 ref='verificationStatus'
                 name='verificationStatus'
                 floatingLabelText='Verification Status'
                 value={ get(this, 'data.allergy.verificationStatus', '') }
                 onChange={ this.changeState.bind(this, 'verificationStatus')}
-                hintText="confirmed"
+                hintText="unconfirmed | confirmed | refuted | entered-in-error"
                 floatingLabelFixed={true}
                 fullWidth
-                /><br/>  
+                /><br/>   */}
             </Col>
 
             <Col md={3} >
-              <TextField
+              <SelectField
+                  id='categoryInput'
+                  ref='category'
+                  name='category'
+                  floatingLabelText='Category'
+                  value={this.data.category}
+                  onChange={ this.changeState.bind(this, 'category')}
+                  floatingLabelFixed={true}
+                  fullWidth
+                >
+                  <MenuItem value={0} primaryText="food" />
+                  <MenuItem value={1} primaryText="medication" />
+                  <MenuItem value={2} primaryText="environment" />
+                  <MenuItem value={3} primaryText="biologic" />
+                </SelectField>
+              {/* <TextField
                 id='categoryInput'
                 ref='category'
                 name='category'
                 floatingLabelText='Category'
                 value={ get(this, 'data.allergy.category', '') }
                 onChange={ this.changeState.bind(this, 'category')}
-                hintText="food"
+                hintText="food | medication | environment | biologic'"
                 floatingLabelFixed={true}
                 fullWidth
-                /><br/>
+                /><br/> */}
             </Col>
             <Col md={3} >
-              <TextField
+              <SelectField
+                id='typeInput'
+                ref='type'
+                name='type'
+                floatingLabelText='Type'
+                value={this.data.type}
+                onChange={ this.changeState.bind(this, 'type')}
+                floatingLabelFixed={true}
+                fullWidth
+              >
+                <MenuItem value={0} primaryText="allergy" />
+                <MenuItem value={1} primaryText="intollerance" />
+              </SelectField>
+              {/* <TextField
                 id='typeInput'
                 ref='type'
                 name='type'
@@ -144,7 +269,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 onChange={ this.changeState.bind(this, 'type')}
                 floatingLabelFixed={true}
                 fullWidth
-                /><br/>
+                /><br/> */}
             </Col>
           </Row>
 
@@ -176,7 +301,22 @@ export class AllergyIntoleranceDetail extends React.Component {
                 /><br/>
             </Col>
             <Col md={4} >
-              <TextField
+              <SelectField
+                id='criticalityInput'
+                ref='criticality'
+                name='criticality'
+                floatingLabelText='Criticality'
+                value={this.data.criticality}
+                onChange={ this.changeState.bind(this, 'criticality')}
+                floatingLabelFixed={true}
+                fullWidth
+              >
+                <MenuItem value={0} primaryText="low" />
+                <MenuItem value={1} primaryText="high" />
+                <MenuItem value={2} primaryText="unable-to-assess" />
+              </SelectField>
+
+              {/* <TextField
                 id='criticalityInput'
                 ref='criticality'
                 name='criticality'
@@ -186,7 +326,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 hintText="Severe"
                 floatingLabelFixed={true}
                 fullWidth
-                /><br/>   
+                /><br/>    */}
             </Col>            
           </Row>
           <Row>
@@ -198,6 +338,18 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelText='Patient'
                 value={ get(this, 'data.allergy.patient.display', '') }
                 onChange={ this.changeState.bind(this, 'patientDisplay')}
+                floatingLabelFixed={true}
+                fullWidth
+                /><br/>
+            </Col>
+            <Col md={4} >
+              <TextField
+                id='recorderDisplayInput'
+                ref='recorderDisplay'
+                name='recorderDisplay'
+                floatingLabelText='Recorder'
+                value={ get(this, 'data.allergy.recorder.display', '') }
+                onChange={ this.changeState.bind(this, 'recorderDisplay')}
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
@@ -293,13 +445,44 @@ export class AllergyIntoleranceDetail extends React.Component {
         }];
         break;
       case "verificationStatus":
-        allergyUpdate.verificationStatus = value;
+        switch (value) {
+          case 0:
+            allergyUpdate.verificationStatus = 'unconfirmed';
+            break;
+          case 1:
+            allergyUpdate.verificationStatus = 'confirmed';            
+            break;
+          case 2:
+            allergyUpdate.verificationStatus = 'refuted';        
+            break;
+          case 3:
+            allergyUpdate.verificationStatus = 'entered-in-error';        
+            break;
+        }       
         break;
       case "clinicalStatus":
-        allergyUpdate.clinicalStatus = value;
+        switch (value) {
+          case 0:
+            allergyUpdate.clinicalStatus = 'active';
+            break;
+          case 1:
+            allergyUpdate.clinicalStatus = 'inactive';            
+            break;
+          case 2:
+            allergyUpdate.clinicalStatus = 'resolved';        
+            break;
+        }        
         break;
       case "type":
-        allergyUpdate.type = value;
+        switch (value) {
+          case 0:
+            allergyUpdate.type = 'allergy';
+            break;
+          case 1:
+            allergyUpdate.type = 'intolerance';            
+            break;
+        }   
+        // allergyUpdate.type = value;
         break;
       case "reaction":
         allergyUpdate.reaction = [{
@@ -307,7 +490,21 @@ export class AllergyIntoleranceDetail extends React.Component {
         }];
         break;
       case "category":
-        allergyUpdate.category = [value];
+        // 'food', 'medication', 'environment', 'biologic'      
+        switch (value) {
+          case 0:
+            allergyUpdate.category = ['food'];
+            break;
+          case 1:
+            allergyUpdate.category = ['medication'];            
+            break;
+          case 2:
+            allergyUpdate.category = ['environment'];        
+            break;
+          case 3:
+            allergyUpdate.category = ['biologic'];        
+            break;
+        }   
         break;
       case "patientDisplay":
         allergyUpdate.patient = {
@@ -322,8 +519,19 @@ export class AllergyIntoleranceDetail extends React.Component {
       case "datePicker":
         allergyUpdate.onsetDateTime = value;
         break;
-        case "criticality":
-        allergyUpdate.criticality = value;
+      case "criticality":
+        switch (value) {
+          case 0:
+            allergyUpdate.criticality = 'low';
+            break;
+          case 1:
+            allergyUpdate.criticality = 'high';            
+            break;
+          case 2:
+            allergyUpdate.criticality = 'unable-to-assess';        
+            break;
+        }   
+        // allergyUpdate.criticality = value;
         break;
   
       default:

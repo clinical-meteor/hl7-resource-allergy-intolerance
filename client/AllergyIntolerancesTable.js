@@ -251,7 +251,7 @@ export class AllergyIntolerancesTable extends React.Component {
       // DSTU2 v1.0.2
       newRow.patient = get(this.data.allergyIntolerances[i], 'patient.display');
       newRow.recorder = get(this.data.allergyIntolerances[i], 'recorder.display');
-      newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].manifestation[0].text');
+      newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].description');
       newRow.onset = moment(get(this.data.allergyIntolerances[i], 'reaction[0].onset')).format("YYYY-MM-DD");
 
       if(get(this.data.allergyIntolerances[i], 'criticality')){
