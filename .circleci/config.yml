@@ -114,7 +114,7 @@ jobs:
     - run: cd ../baseline/packages/hl7-resource-allergy-intolerance && pwd
     - run: cd ../baseline/packages && ls -la
 
-    - run: cd ../baseline && npm i --save-dev selenium-webdriver@3.0.0-beta-2 chromedriver
+    - run: cd ../baseline && npm i --save-dev selenium-webdriver@3.6.0 chromedriver
     - run: cd ../baseline && meteor add dispatch:mocha practicalmeteor:chai
     - run: cd ../baseline && meteor add clinical:hl7-resource-allergy-intolerance 
     - run: cd ../baseline && mkdir imports 
