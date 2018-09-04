@@ -275,16 +275,16 @@ export class AllergyIntolerancesTable extends React.Component {
         <tr key={i} className="allergyIntoleranceRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
           { this.renderToggles(this.data.displayToggle, this.data.allergyIntolerances[i]) }
           { this.renderIdentifier(this.data.displayIdentifier, this.data.allergyIntolerances[i]) }
+          <td className='reaction'>{ newRow.reaction }</td>
           <td className='criticality'>{ newRow.criticality }</td>
+          { this.renderType(this.data.displayType, this.data.allergyIntolerances[i]) }
+          { this.renderCategory(this.data.displayCategory, this.data.allergyIntolerances[i]) }
           <td className='patient'>{ newRow.patient }</td>
           <td className='recorder'>{ newRow.recorder }</td>
-          <td className='reaction'>{ newRow.reaction }</td>
           <td className='onset'>{ newRow.onset }</td>
           { this.renderClinicalStatus(this.data.displayStatus, this.data.allergyIntolerances[i]) }
           { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
           { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
-          { this.renderType(this.data.displayType, this.data.allergyIntolerances[i]) }
-          { this.renderCategory(this.data.displayCategory, this.data.allergyIntolerances[i]) }
           { this.renderDate(this.data.displayDates, this.data.allergyIntolerances[i].assertedDate) }
         </tr>
       )
@@ -296,15 +296,15 @@ export class AllergyIntolerancesTable extends React.Component {
           <tr>
             { this.renderTogglesHeader(this.data.displayToggle) }
             { this.renderIdentifierHeader(this.data.displayIdentifier) }
+            <th className='reaction'>Reaction</th>
             <th className='criticality'>Criticality</th>
+            { this.renderTypeHeader(this.data.displayType) }
+            { this.renderCategoryHeader(this.data.displayCategory) }
             <th className='patient'>Patient</th>
             <th className='recorder'>Recorder</th>
-            <th className='reaction'>Reaction</th>
             <th className='onsert'>Onset</th>
             { this.renderClinicalStatusHeader(this.data.displayStatus) }
             { this.renderVerificationStatusHeader(this.data.displayVerification) }
-            { this.renderTypeHeader(this.data.displayType) }
-            { this.renderCategoryHeader(this.data.displayCategory) }
             { this.renderDateHeader(this.data.displayDates) }
           </tr>
         </thead>

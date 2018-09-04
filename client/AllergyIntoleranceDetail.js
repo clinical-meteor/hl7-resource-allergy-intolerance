@@ -9,137 +9,174 @@
 import { CardActions, CardText, DatePicker, RaisedButton, TextField, SelectField, MenuItem } from 'material-ui';
 import { Col, Grid, Row } from 'react-bootstrap';
 
-import { Bert } from 'meteor/clinical:alert';
+// import { Bert } from 'meteor/clinical:alert';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import React from 'react';
+import React, { Component } from 'react';
+import update from 'immutability-helper';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import { browserHistory } from 'react-router';
-import { get } from 'lodash';
+import { get, set, setWith, clone, cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
-let defaultAllergyIntolerance = {
-  "resourceType": "AllergyIntolerance",
-    'identifier': [{
-      'use': 'oficial',
-      'value': ''
-    }],
-    'clinicalStatus': 'active',
-    'verificationStatus': '',
-    'type': 'allergy',
-    'category': ['food'],
-    'code': null,
-    'patient': null,
-    "onsetDateTime": null,
-    "reaction": [{
-      "description": ""
-    }],
-    "criticality": 'high'
-};
 
 Session.setDefault('allergyIntoleranceUpsert', false);
-Session.setDefault('selectedAllergyIntolerance', false);
 
 export class AllergyIntoleranceDetail extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      allergyIntoleranceId: false,
+      allergy: {
+        resourceType: "AllergyIntolerance",
+          identifier: [{
+            value: ''
+          }],
+          clinicalStatus: 'active',
+          verificationStatus: 'unconfirmed',
+          type: 'allergy',
+          category: ['food'],
+          code: null,
+          patient: {
+            display: ''
+          },
+          recorder: {
+            display: ''
+          },
+          onsetDateTime: null,
+          reaction: [{
+            description: ''
+          }],
+          criticality: 'low'
+      },
+      form: {
+        allergyIdentifier: '',
+        reactionDescription: '',
+        clinicalStatus: 0,
+        verificationStatus: 0,
+        category: 0,
+        type: 0,
+        criticality: 0,
+        patientDisplay: '',
+        recorderDisplay: ''
+      }
+    }
+  }
+  deydrateFhirResource(allergyIntolerance) {
+
+    let formData = Object.assign({}, this.state.form);
+
+    formData.allergyIdentifier = get(allergyIntolerance, 'identifier[0].value')
+    formData.reactionDescription = get(allergyIntolerance, 'reaction[0].description')    
+    formData.patientDisplay = get(allergyIntolerance, 'patient.display')
+    formData.recorderDisplay = get(allergyIntolerance, 'recorder.display')
+
+    switch (get(allergyIntolerance, 'clinicalStatus')) {
+      case 'active':
+        formData.clinicalStatus = 0;  
+        break;
+      case 'inactive':
+        formData.clinicalStatus = 1;         
+        break;
+      case 'resolved':
+        formData.clinicalStatus = 2;     
+        break;      
+    }
+
+    switch (get(allergyIntolerance, 'verificationStatus')) {
+      case 'unconfirmed':
+        formData.verificationStatus = 0;  
+        break;
+      case 'confirmed':
+        formData.verificationStatus = 1;         
+        break;
+      case 'refuted':
+        formData.verificationStatus = 2;     
+        break;      
+      case 'entered-in-error':
+        formData.verificationStatus = 3;     
+        break;      
+    }
+
+    switch (get(allergyIntolerance, 'category')) {
+      case 'food':
+        formData.category = 0;  
+        break;
+      case 'medication':
+        formData.category = 1;         
+        break;
+      case 'environment':
+        formData.category = 2;     
+        break;      
+      case 'biologic':
+        formData.category = 3;     
+        break;      
+    }
+
+    switch (get(allergyIntolerance, 'type')) {
+      case 'allergy':
+        formData.type = 0;  
+        break;
+      case 'intollerance':
+        formData.type = 1;         
+        break;
+    }
+
+    switch (get(allergyIntolerance, 'criticality')) {
+      case 'low':
+        formData.criticality = 0;  
+        break;
+      case 'high':
+        formData.criticality = 1;         
+        break;
+      case 'unable-to-assess':
+        formData.criticality = 2;     
+        break;      
+    }
+    return formData;
+  }
+  shouldComponentUpdate(nextProps){
+    console.log('AllergyIntoleranceDetail.shouldComponentUpdate()', nextProps, this.state)
+    let shouldUpdate = true;
+
+    // both false; don't take any more updates
+    if(nextProps.allergy === this.state.allergy){
+      shouldUpdate = false;
+    }
+
+    // received an allergie from the table; okay lets update again
+    if(nextProps.allergyIntoleranceId !== this.state.allergyIntoleranceId){
+      this.setState({allergyIntoleranceId: nextProps.allergyIntoleranceId})     
+      this.setState({allergy: nextProps.allergy})     
+      this.setState({form: this.deydrateFhirResource(nextProps.allergy)})     
+      shouldUpdate = true;
+    }
+ 
+    return shouldUpdate;
+  }
+
   getMeteorData() {
     let data = {
-      clinicalStatus: 0,
-      verificationStatus: 0,
-      category: 0,
-      type: 0,
-      criticality: 0,
-      allergyIntoleranceId: false,
-      allergy: defaultAllergyIntolerance,
+      allergyIntoleranceId: this.props.allergyIntoleranceId,
+      savedAllergy: false,
+      allergy: false,
+      form: this.state.form,
       showDatePicker: false      
     };
 
     if(this.props.showDatePicker){
       data.showDatePicker = this.props.showDatePicker
     }
-
-    if (Session.get('allergyIntoleranceUpsert')) {
-      data.allergy = Session.get('allergyIntoleranceUpsert');
-
-      switch (get(data.allergy, 'clinicalStatus')) {
-        case 'active':
-          data.clinicalStatus = 0;  
-          break;
-        case 'inactive':
-          data.clinicalStatus = 1;         
-          break;
-        case 'resolved':
-          data.clinicalStatus = 2;     
-          break;      
-      }
-
-      switch (get(data.allergy, 'verificationStatus')) {
-        case 'unconfirmed':
-          data.verificationStatus = 0;  
-          break;
-        case 'confirmed':
-          data.verificationStatus = 1;         
-          break;
-        case 'refuted':
-          data.verificationStatus = 2;     
-          break;      
-        case 'entered-in-error':
-          data.verificationStatus = 3;     
-          break;      
-      }
-
-      switch (get(data.allergy, 'category')) {
-        case 'food':
-          data.category = 0;  
-          break;
-        case 'medication':
-          data.category = 1;         
-          break;
-        case 'environment':
-          data.category = 2;     
-          break;      
-        case 'biologic':
-          data.category = 3;     
-          break;      
-      }
-
-      switch (get(data.allergy, 'category')) {
-        case 'allergy':
-          data.type = 0;  
-          break;
-        case 'intollerance':
-          data.type = 1;         
-          break;
-      }
-
-      switch (get(data.allergy, 'criticality')) {
-        case 'low':
-          data.criticality = 0;  
-          break;
-        case 'high':
-          data.criticality = 1;         
-          break;
-        case 'unable-to-assess':
-          data.criticality = 2;     
-          break;      
-      }
-
-    } else {
-        console.log("selectedAllergyIntolerance", Session.get('selectedAllergyIntolerance'));
-
-        let selectedAllergyIntolerance = AllergyIntolerances.findOne({_id: Session.get('selectedAllergyIntolerance')});
-        console.log("selectedAllergyIntolerance", selectedAllergyIntolerance);
-
-        if (selectedAllergyIntolerance) {
-          data.allergy = selectedAllergyIntolerance;
-        }
+    if(this.props.allergy){
+      data.allergy = this.props.allergy;
     }
 
-    if (Session.get('selectedAllergyIntolerance')) {
-      data.allergyIntoleranceId = Session.get('selectedAllergyIntolerance');
-    }  
-
-
+    // if(props.allergy){
+    //   console.log('componentDidMount.props.allergy.dehydrateFhirResource()', this.deydrateFhirResource(props.allergy))
+    //   this.setState({form: this.deydrateFhirResource(props.allergy)})      
+    // }
+    
     console.log('AllergyIntoleranceDetail[data]', data);
     return data;
   }
@@ -161,6 +198,9 @@ export class AllergyIntoleranceDetail extends React.Component {
     }
   }
   render() {
+    if(process.env.NODE_ENV === "test") console.log('AllergyIntoleranceDetail.render()', this.state)
+    let formData = this.state.form;
+
     return (
       <div id={this.props.id} className="allergyIntoleranceDetail">
         <CardText>
@@ -171,7 +211,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='clinicalStatus'
                 name='clinicalStatus'
                 floatingLabelText='Clinical Status'
-                value={this.data.clinicalStatus}
+                value={ get(formData, 'clinicalStatus', '') }
                 onChange={ this.changeState.bind(this, 'clinicalStatus')}
                 floatingLabelFixed={true}
                 fullWidth
@@ -181,13 +221,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 <MenuItem value={2} primaryText="resolved" />
               </SelectField>
 
-              {/* <TextField
-                value={ get(this, 'data.allergy.clinicalStatus', '') }
-                // onChange={ this.changeState.bind(this, 'clinicalStatus')}
-                // hintText="active | inactive | resolved'"
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>   */}
+
             </Col>
             <Col md={3} >
               <SelectField
@@ -195,7 +229,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='verificationStatus'
                 name='verificationStatus'
                 floatingLabelText='Verification Status'
-                value={this.data.verificationStatus}
+                value={ get(formData, 'verificationStatus', '') }
                 onChange={ this.changeState.bind(this, 'verificationStatus')}
                 floatingLabelFixed={true}
                 fullWidth
@@ -205,17 +239,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 <MenuItem value={2} primaryText="refuted" />
                 <MenuItem value={3} primaryText="entered-in-error" />
               </SelectField>
-              {/* <TextField
-                id='verificationStatusInput'
-                ref='verificationStatus'
-                name='verificationStatus'
-                floatingLabelText='Verification Status'
-                value={ get(this, 'data.allergy.verificationStatus', '') }
-                onChange={ this.changeState.bind(this, 'verificationStatus')}
-                hintText="unconfirmed | confirmed | refuted | entered-in-error"
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>   */}
+
             </Col>
 
             <Col md={3} >
@@ -224,7 +248,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                   ref='category'
                   name='category'
                   floatingLabelText='Category'
-                  value={this.data.category}
+                  value={ get(formData, 'category', '') }
                   onChange={ this.changeState.bind(this, 'category')}
                   floatingLabelFixed={true}
                   fullWidth
@@ -234,17 +258,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                   <MenuItem value={2} primaryText="environment" />
                   <MenuItem value={3} primaryText="biologic" />
                 </SelectField>
-              {/* <TextField
-                id='categoryInput'
-                ref='category'
-                name='category'
-                floatingLabelText='Category'
-                value={ get(this, 'data.allergy.category', '') }
-                onChange={ this.changeState.bind(this, 'category')}
-                hintText="food | medication | environment | biologic'"
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/> */}
+
             </Col>
             <Col md={3} >
               <SelectField
@@ -252,7 +266,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='type'
                 name='type'
                 floatingLabelText='Type'
-                value={this.data.type}
+                value={ get(formData, 'type', '') }
                 onChange={ this.changeState.bind(this, 'type')}
                 floatingLabelFixed={true}
                 fullWidth
@@ -260,16 +274,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 <MenuItem value={0} primaryText="allergy" />
                 <MenuItem value={1} primaryText="intollerance" />
               </SelectField>
-              {/* <TextField
-                id='typeInput'
-                ref='type'
-                name='type'
-                floatingLabelText='Type'
-                value={ get(this, 'data.allergy.type', '') }
-                onChange={ this.changeState.bind(this, 'type')}
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/> */}
+
             </Col>
           </Row>
 
@@ -280,7 +285,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='identifier'
                 name='identifier'
                 floatingLabelText='Identifier'            
-                value={ get(this, 'data.allergy.identifier[0].value', '') }
+                value={ get(formData, 'allergyIdentifier', '') }
                 onChange={ this.changeState.bind(this, 'identifier')}
                 hintText="Shellfish"
                 floatingLabelFixed={true}
@@ -293,7 +298,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='reaction'
                 name='reaction'
                 floatingLabelText='Reaction Description'
-                value={ get(this, 'data.allergy.reaction[0].description', '') }
+                value={ get(formData, 'reactionDescription', '') }
                 onChange={ this.changeState.bind(this, 'reaction')}
                 hintText="Hives"
                 floatingLabelFixed={true}
@@ -306,7 +311,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='criticality'
                 name='criticality'
                 floatingLabelText='Criticality'
-                value={this.data.criticality}
+                value={ get(formData, 'criticality', '') }
                 onChange={ this.changeState.bind(this, 'criticality')}
                 floatingLabelFixed={true}
                 fullWidth
@@ -316,17 +321,6 @@ export class AllergyIntoleranceDetail extends React.Component {
                 <MenuItem value={2} primaryText="unable-to-assess" />
               </SelectField>
 
-              {/* <TextField
-                id='criticalityInput'
-                ref='criticality'
-                name='criticality'
-                floatingLabelText='Criticality'
-                value={ get(this, 'data.allergy.criticality', '') }
-                onChange={ this.changeState.bind(this, 'criticality')}
-                hintText="Severe"
-                floatingLabelFixed={true}
-                fullWidth
-                /><br/>    */}
             </Col>            
           </Row>
           <Row>
@@ -336,7 +330,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='patientDisplay'
                 name='patientDisplay'
                 floatingLabelText='Patient'
-                value={ get(this, 'data.allergy.patient.display', '') }
+                value={ get(formData, 'patientDisplay', '') }
                 onChange={ this.changeState.bind(this, 'patientDisplay')}
                 floatingLabelFixed={true}
                 fullWidth
@@ -348,15 +342,13 @@ export class AllergyIntoleranceDetail extends React.Component {
                 ref='recorderDisplay'
                 name='recorderDisplay'
                 floatingLabelText='Recorder'
-                value={ get(this, 'data.allergy.recorder.display', '') }
+                value={ get(formData, 'recorderDisplay', '') }
                 onChange={ this.changeState.bind(this, 'recorderDisplay')}
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
             </Col>
           </Row>
-
-
 
           <br/>
           { this.renderDatePicker(this.data.showDatePicker, get(this, 'data.allergy.onsetDateTime') ) }
@@ -370,192 +362,197 @@ export class AllergyIntoleranceDetail extends React.Component {
       </div>
     );
   }
-  addToContinuityOfCareDoc(){
-    console.log('addToContinuityOfCareDoc', Session.get('allergyIntoleranceUpsert'));
-
-    var allergyIntoleranceUpsert = Session.get('allergyIntoleranceUpsert');
-
-    alert('Temporarily disabled')
-    // var newAllergy = {
-    //   "resourceType": "AllergyIntolerance",
-    //   'identifier': allergyIntoleranceUpsert.identifier,
-    //   'clinicalStatus': allergyIntoleranceUpsert.clinicalStatus,
-    //   'verificationStatus': allergyIntoleranceUpsert.verificationStatus,
-    //   'type': allergyIntoleranceUpsert.type,
-    //   'category': allergyIntoleranceUpsert.category,
-    //   'code': null,
-    //   'patient': null,
-    //   "onsetDateTime": allergyIntoleranceUpsert.onsetDateTime
-    // }
-
-    // console.log('Lets write this to the profile... ', newAllergy);
-
-    // Meteor.users.update({_id: Meteor.userId()}, {$addToSet: {
-    //   'profile.continuityOfCare.allergyIntolerances': newAllergy
-    // }}, function(error, result){
-    //   if(error){
-    //     console.log('error', error);
-    //   }
-    //   if(result){
-    //     browserHistory.push('/continuity-of-care');
-    //   }
-    // });
-  }
 
   determineButtons(allergyId){
     if (allergyId) {
       return (
         <div>
-          <RaisedButton id="saveAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-          <RaisedButton id="deleteAllergyIntoleranceButton" label="Delete" onClick={this.handleDeleteButton.bind(this)} />
-
-          <RaisedButton id="addAllergyToContinuityCareDoc" label="Add to CCD" primary={true} onClick={this.addToContinuityOfCareDoc.bind(this)} style={{float: 'right'}} />
+          <RaisedButton id="updateAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this) } style={{marginRight: '20px'}} />
+          <RaisedButton id="deleteAllergyIntoleranceButton" label="Delete" onClick={this.handleDeleteButton.bind(this) } />
         </div>
       );
     } else {
       return(
-        <RaisedButton id="saveAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
+        <RaisedButton id="saveAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this) } />
       );
     }
   }
-
-  // this could be a mixin
-  changeState(field, event, value){
-    let allergyUpdate;
-
-    if(process.env.NODE_ENV === "test") console.log("AllergyIntoleranceDetail.changeState", field, event, value);
-
-    // by default, assume there's no other data and we're creating a new allergy
-    if (Session.get('allergyIntoleranceUpsert')) {
-      allergyUpdate = Session.get('allergyIntoleranceUpsert');
-    } else {
-      allergyUpdate = defaultAllergyIntolerance;
-    }
-
-    // if there's an existing allergy, use them
-    if (Session.get('selectedAllergyIntolerance')) {
-      allergyUpdate = this.data.allergy;
-    }
+  updateFormData(formData, field, textValue){
+    if(process.env.NODE_ENV === "test") console.log("AllergyIntoleranceDetail.updateFormData", formData, field, textValue);
 
     switch (field) {
       case "identifier":
-        allergyUpdate.identifier = [{
-          use: 'official',
-          value: value
-        }];
+        set(formData, 'allergyIdentifier', textValue)
         break;
+      case "reaction":
+        set(formData, 'reactionDescription', textValue)
+        break;        
       case "verificationStatus":
-        switch (value) {
+        set(formData, 'verificationStatus', textValue)
+        break;
+      case "clinicalStatus":
+        set(formData, 'clinicalStatus', textValue)
+        break;
+      case "type":
+        set(formData, 'type', textValue)
+        break;
+      case "category":
+        set(formData, 'category', textValue)
+        break;
+      case "patientDisplay":
+        set(formData, 'patientDisplay', textValue)
+        break;
+      case "recorderDisplay":
+        set(formData, 'recorderDisplay', textValue)
+        break;
+      case "datePicker":
+        set(formData, 'onsetDateTime', textValue)
+        break;
+      case "criticality":
+        set(formData, 'criticality', textValue)
+        break;  
+      default:
+    }
+
+    if(process.env.NODE_ENV === "test") console.log("formData", formData);
+
+    return formData;
+  }
+  updateAllergy(allergyData, field, textValue){
+    if(process.env.NODE_ENV === "test") console.log("AllergyIntoleranceDetail.updateAllergy", allergyData, field, textValue);
+
+    switch (field) {
+      case "identifier":
+        setWith(allergyData, 'identifier[0].value', textValue, Object)
+        break;
+      case "reaction":
+        setWith(allergyData, 'reaction[0].description', textValue, Object)
+        break;        
+      case "verificationStatus":
+        switch (textValue) {
           case 0:
-            allergyUpdate.verificationStatus = 'unconfirmed';
+            set(allergyData, 'verificationStatus', 'unconfirmed')
             break;
           case 1:
-            allergyUpdate.verificationStatus = 'confirmed';            
+            set(allergyData, 'verificationStatus', 'confirmed')
             break;
           case 2:
-            allergyUpdate.verificationStatus = 'refuted';        
+            set(allergyData, 'verificationStatus', 'refuted')
             break;
           case 3:
-            allergyUpdate.verificationStatus = 'entered-in-error';        
+            set(allergyData, 'verificationStatus', 'entered-in-error')
             break;
         }       
         break;
       case "clinicalStatus":
-        switch (value) {
+        switch (textValue) {
           case 0:
-            allergyUpdate.clinicalStatus = 'active';
+            set(allergyData, 'clinicalStatus', 'active')
             break;
           case 1:
-            allergyUpdate.clinicalStatus = 'inactive';            
+            set(allergyData, 'clinicalStatus', 'inactive')
             break;
           case 2:
-            allergyUpdate.clinicalStatus = 'resolved';        
+            set(allergyData, 'clinicalStatus', 'resolved')
             break;
         }        
         break;
       case "type":
-        switch (value) {
+        switch (textValue) {
           case 0:
-            allergyUpdate.type = 'allergy';
+            set(allergyData, 'type', 'allergy')
             break;
           case 1:
-            allergyUpdate.type = 'intolerance';            
+            set(allergyData, 'type', 'intolerance')
             break;
         }   
-        // allergyUpdate.type = value;
-        break;
-      case "reaction":
-        allergyUpdate.reaction = [{
-          description: value
-        }];
         break;
       case "category":
-        // 'food', 'medication', 'environment', 'biologic'      
-        switch (value) {
+        switch (textValue) {
           case 0:
-            allergyUpdate.category = ['food'];
+            set(allergyData, 'category', ['food'])
             break;
           case 1:
-            allergyUpdate.category = ['medication'];            
+            set(allergyData, 'category', ['medication'])
             break;
           case 2:
-            allergyUpdate.category = ['environment'];        
+            set(allergyData, 'category', ['environment'])
             break;
           case 3:
-            allergyUpdate.category = ['biologic'];        
+            set(allergyData, 'category', ['biologic'])
             break;
         }   
         break;
       case "patientDisplay":
-        allergyUpdate.patient = {
-          display: value
-        }
+          set(allergyData, 'patient.display', textValue)
         break;
       case "recorderDisplay":
-        allergyUpdate.recorder = {
-          display: value
-        }
+          set(allergyData, 'recorder.display', textValue)
         break;
       case "datePicker":
-        allergyUpdate.onsetDateTime = value;
+        set(allergyData, 'onsetDateTime', textValue)
         break;
       case "criticality":
-        switch (value) {
+        switch (textValue) {
           case 0:
-            allergyUpdate.criticality = 'low';
+            set(allergyData, 'criticality', 'low')
             break;
           case 1:
-            allergyUpdate.criticality = 'high';            
+            set(allergyData, 'criticality', 'high')
             break;
           case 2:
-            allergyUpdate.criticality = 'unable-to-assess';        
+            set(allergyData, 'criticality', 'unable-to-assess')
             break;
         }   
-        // allergyUpdate.criticality = value;
         break;
-  
       default:
-
     }
 
-    if(process.env.NODE_ENV === "test") console.log("allergyUpdate", allergyUpdate);
-    Session.set('allergyIntoleranceUpsert', allergyUpdate);
+    if(process.env.NODE_ENV === "test") console.log("allergyData", allergyData);
+
+    return allergyData;
+  }
+  componentDidUpdate(props){
+    console.log('AllergyIntoleranceDetail.componentDidUpdate()', props, this.state)
+  }
+  changeState(field, event, textValue){
+    if(process.env.NODE_ENV === "test") console.log("AllergyIntoleranceDetail.changeState", field, textValue);
+    if(process.env.NODE_ENV === "test") console.log("this.state", this.state);
+
+    let formData = Object.assign({}, this.state.form);
+    let allergyData = Object.assign({}, this.state.allergy);
+
+    formData = this.updateFormData(formData, field, textValue);
+    allergyData = this.updateAllergy(allergyData, field, textValue);
+
+    if(process.env.NODE_ENV === "test") console.log("allergyData", allergyData);
+    if(process.env.NODE_ENV === "test") console.log("formData", formData);
+
+    this.setState({allergy: allergyData})
+    this.setState({form: formData})
   }
 
   handleSaveButton(){
-    let allergyIntoleranceUpdate = Session.get('allergyIntoleranceUpsert');
+    console.log('Is this even working?  Saving a new Allergy...', this.state)
 
-    if(process.env.NODE_ENV === "test") console.log("allergyIntoleranceUpdate", allergyIntoleranceUpdate);
+    let fhirAllergyData = Object.assign({}, this.state.allergy);
 
-    if (Session.get('selectedAllergyIntolerance')) {
+    console.log('fhirAllergyData', fhirAllergyData);
+
+
+    if (this.data.allergyIntoleranceId) {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
-      delete allergyIntoleranceUpdate._id;
+      delete fhirAllergyData._id;
 
-      // not sure why we're having to respecify this; fix for a bug elsewhere
-      allergyIntoleranceUpdate.resourceType = 'AllergyIntolerance';
+      // // not sure why we're having to respecify this; fix for a bug elsewhere
+      // wtfAllergy.resourceType = 'AllergyIntolerance';
 
       AllergyIntolerances.update(
-        {_id: Session.get('selectedAllergyIntolerance')}, {$set: allergyIntoleranceUpdate }, function(error, result) {
+        {_id: this.data.allergyIntoleranceId}, {$set: fhirAllergyData }, {
+          validate: false, 
+          filter: false, 
+          removeEmptyStrings: false
+        }, function(error, result) {
           if (error) {
             console.log("error", error);
             Bert.alert(error.reason, 'danger');
@@ -564,15 +561,19 @@ export class AllergyIntoleranceDetail extends React.Component {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: Session.get('selectedAllergyIntolerance')});
             Session.set('allergyIntolerancePageTabIndex', 1);
             Session.set('selectedAllergyIntolerance', false);
-            Session.set('allergyIntoleranceUpsert', false);
+            Session.set('wtfAllergy', false);
             Bert.alert('AllergyIntolerance updated!', 'success');
           }
         });
     } else {
 
-      if(process.env.NODE_ENV === "test") console.log("create a new allergyIntolerance", allergyIntoleranceUpdate);
+      if(process.env.NODE_ENV === "test") console.log("Create a new allergyIntolerance", fhirAllergyData);
 
-      AllergyIntolerances.insert(allergyIntoleranceUpdate, function(error, result) {
+      AllergyIntolerances.insert(fhirAllergyData, {
+        validate: false, 
+        filter: false, 
+        removeEmptyStrings: false
+      }, function(error, result) {
         if (error) {
           console.log("error", error);
           Bert.alert(error.reason, 'danger');

@@ -20,6 +20,8 @@ import ReactMixin  from 'react-mixin';
 
 
 Session.setDefault('fhirVersion', 'v1.0.2');
+Session.setDefault('selectedAllergyIntolerance', false);
+
 export class AllergyIntolerancesPage extends React.Component {
   getMeteorData() {
     let data = {
@@ -32,9 +34,16 @@ export class AllergyIntolerancesPage extends React.Component {
       },
       tabIndex: Session.get('allergyIntolerancePageTabIndex'),
       allergyIntoleranceSearchFilter: Session.get('allergyIntoleranceSearchFilter'),
-      currentAllergyIntolerance: Session.get('selectedAllergyIntolerance'),
-      fhirVersion: Session.get('fhirVersion')
+      allergyIntoleranceId: Session.get('selectedAllergyIntolerance'),
+      fhirVersion: Session.get('fhirVersion'),
+      selectedAllergy: false
     };
+
+    if (Session.get('selectedAllergyIntolerance')){
+      data.selectedAllergy = AllergyIntolerances.findOne({_id: Session.get('selectedAllergyIntolerance')});
+    } else {
+      data.selectedAllergy = false;
+    }
 
     data.style = Glass.blur(data.style);
     data.style.appbar = Glass.darkroom(data.style.appbar);
@@ -62,17 +71,22 @@ export class AllergyIntolerancesPage extends React.Component {
             <CardText>
               <Tabs id="allergyIntolerancesPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                <Tab className='newAllergyIntoleranceTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                 <AllergyIntoleranceDetail id='newAllergyIntolerance' />
+                 <AllergyIntoleranceDetail 
+                  id='newAllergyIntolerance' 
+                  fhirVersion={ this.data.fhirVersion }
+                  allergy={ this.data.selectedAllergy }
+                  allergyIntoleranceId={ this.data.allergyIntoleranceId } />
                </Tab>
                <Tab className="allergyIntoleranceListTab" label='AllergyIntolerances' onActive={this.handleActive} style={this.data.style.tab} value={1}>
                 <AllergyIntolerancesTable id='allergyIntolerancesTable' fhirVersion={ this.data.fhirVersion } />
                </Tab>
                <Tab className="allergyIntoleranceDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
                  <AllergyIntoleranceDetail 
-                  id='allergyIntoleranceDetails' 
-                  showDatePicker={true} 
-                  fhirVersion={ this.data.fhirVersion }
-                  />
+                    id='allergyIntoleranceDetails' 
+                    showDatePicker={true} 
+                    fhirVersion={ this.data.fhirVersion }
+                    allergy={ this.data.selectedAllergy }
+                    allergyIntoleranceId={ this.data.allergyIntoleranceId } />
                </Tab>
              </Tabs>
             </CardText>
