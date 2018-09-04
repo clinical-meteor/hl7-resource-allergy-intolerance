@@ -63,7 +63,7 @@ export class AllergyIntoleranceDetail extends React.Component {
       }
     }
   }
-  deydrateFhirResource(allergyIntolerance) {
+  dehydrateFhirResource(allergyIntolerance) {
 
     let formData = Object.assign({}, this.state.form);
 
@@ -137,7 +137,7 @@ export class AllergyIntoleranceDetail extends React.Component {
     return formData;
   }
   shouldComponentUpdate(nextProps){
-    console.log('AllergyIntoleranceDetail.shouldComponentUpdate()', nextProps, this.state)
+    process.env.NODE_ENV === "test" && console.log('AllergyIntoleranceDetail.shouldComponentUpdate()', nextProps, this.state)
     let shouldUpdate = true;
 
     // both false; don't take any more updates
@@ -149,7 +149,7 @@ export class AllergyIntoleranceDetail extends React.Component {
     if(nextProps.allergyIntoleranceId !== this.state.allergyIntoleranceId){
       this.setState({allergyIntoleranceId: nextProps.allergyIntoleranceId})     
       this.setState({allergy: nextProps.allergy})     
-      this.setState({form: this.deydrateFhirResource(nextProps.allergy)})     
+      this.setState({form: this.dehydrateFhirResource(nextProps.allergy)})     
       shouldUpdate = true;
     }
  
@@ -159,7 +159,6 @@ export class AllergyIntoleranceDetail extends React.Component {
   getMeteorData() {
     let data = {
       allergyIntoleranceId: this.props.allergyIntoleranceId,
-      savedAllergy: false,
       allergy: false,
       form: this.state.form,
       showDatePicker: false      
@@ -171,11 +170,6 @@ export class AllergyIntoleranceDetail extends React.Component {
     if(this.props.allergy){
       data.allergy = this.props.allergy;
     }
-
-    // if(props.allergy){
-    //   console.log('componentDidMount.props.allergy.dehydrateFhirResource()', this.deydrateFhirResource(props.allergy))
-    //   this.setState({form: this.deydrateFhirResource(props.allergy)})      
-    // }
     
     console.log('AllergyIntoleranceDetail[data]', data);
     return data;
@@ -483,12 +477,6 @@ export class AllergyIntoleranceDetail extends React.Component {
             break;
         }   
         break;
-      case "patientDisplay":
-          set(allergyData, 'patient.display', textValue)
-        break;
-      case "recorderDisplay":
-          set(allergyData, 'recorder.display', textValue)
-        break;
       case "datePicker":
         set(allergyData, 'onsetDateTime', textValue)
         break;
@@ -513,7 +501,7 @@ export class AllergyIntoleranceDetail extends React.Component {
     return allergyData;
   }
   componentDidUpdate(props){
-    console.log('AllergyIntoleranceDetail.componentDidUpdate()', props, this.state)
+    if(process.env.NODE_ENV === "test") console.log('AllergyIntoleranceDetail.componentDidUpdate()', props, this.state)
   }
   changeState(field, event, textValue){
     if(process.env.NODE_ENV === "test") console.log("AllergyIntoleranceDetail.changeState", field, textValue);
@@ -533,19 +521,16 @@ export class AllergyIntoleranceDetail extends React.Component {
   }
 
   handleSaveButton(){
-    console.log('Is this even working?  Saving a new Allergy...', this.state)
+    console.log('Saving a new Allergy...', this.state)
 
     let fhirAllergyData = Object.assign({}, this.state.allergy);
 
-    console.log('fhirAllergyData', fhirAllergyData);
+    if(process.env.NODE_ENV === "test") console.log('fhirAllergyData', fhirAllergyData);
 
 
     if (this.data.allergyIntoleranceId) {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
       delete fhirAllergyData._id;
-
-      // // not sure why we're having to respecify this; fix for a bug elsewhere
-      // wtfAllergy.resourceType = 'AllergyIntolerance';
 
       AllergyIntolerances.update(
         {_id: this.data.allergyIntoleranceId}, {$set: fhirAllergyData }, {
