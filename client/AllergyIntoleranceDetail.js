@@ -9,7 +9,6 @@
 import { CardActions, CardText, DatePicker, RaisedButton, TextField, SelectField, MenuItem } from 'material-ui';
 import { Col, Grid, Row } from 'react-bootstrap';
 
-// import { Bert } from 'meteor/clinical:alert';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React, { Component } from 'react';
@@ -20,8 +19,6 @@ import { browserHistory } from 'react-router';
 import { get, set, setWith, clone, cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
-
-Session.setDefault('allergyIntoleranceUpsert', false);
 
 export class AllergyIntoleranceDetail extends React.Component {
   constructor(props) {
@@ -351,7 +348,7 @@ export class AllergyIntoleranceDetail extends React.Component {
 
         </CardText>
         <CardActions>
-          { this.determineButtons(this.data.allergyIntoleranceId ) }
+          { this.determineButtons(this.state.allergyIntoleranceId ) }
         </CardActions>
       </div>
     );
@@ -523,18 +520,19 @@ export class AllergyIntoleranceDetail extends React.Component {
   handleSaveButton(){
     console.log('Saving a new Allergy...', this.state)
 
+    let self = this;
     let fhirAllergyData = Object.assign({}, this.state.allergy);
 
     if(process.env.NODE_ENV === "test") console.log('fhirAllergyData', fhirAllergyData);
 
 
-    if (this.data.allergyIntoleranceId) {
+    if (this.state.allergyIntoleranceId) {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
       delete fhirAllergyData._id;
 
       AllergyIntolerances.update(
-        {_id: this.data.allergyIntoleranceId}, {$set: fhirAllergyData }, {
-          validate: false, 
+        {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, {
+          validate: true, 
           filter: false, 
           removeEmptyStrings: false
         }, function(error, result) {
@@ -543,10 +541,9 @@ export class AllergyIntoleranceDetail extends React.Component {
             Bert.alert(error.reason, 'danger');
           }
           if (result) {
-            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: Session.get('selectedAllergyIntolerance')});
+            HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
             Session.set('allergyIntolerancePageTabIndex', 1);
             Session.set('selectedAllergyIntolerance', false);
-            Session.set('wtfAllergy', false);
             Bert.alert('AllergyIntolerance updated!', 'success');
           }
         });
@@ -555,7 +552,7 @@ export class AllergyIntoleranceDetail extends React.Component {
       if(process.env.NODE_ENV === "test") console.log("Create a new allergyIntolerance", fhirAllergyData);
 
       AllergyIntolerances.insert(fhirAllergyData, {
-        validate: false, 
+        validate: true, 
         filter: false, 
         removeEmptyStrings: false
       }, function(error, result) {
@@ -564,10 +561,9 @@ export class AllergyIntoleranceDetail extends React.Component {
           Bert.alert(error.reason, 'danger');
         }
         if (result) {
-          HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: result});
+          HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
           Session.set('allergyIntolerancePageTabIndex', 1);
           Session.set('selectedAllergyIntolerance', false);
-          Session.set('allergyIntoleranceUpsert', false);
           Bert.alert('AllergyIntolerance added!', 'success');
         }
       });
@@ -579,15 +575,15 @@ export class AllergyIntoleranceDetail extends React.Component {
   }
 
   handleDeleteButton(){
-    AllergyIntolerances.remove({_id: Session.get('selectedAllergyIntolerance')}, function(error, result){
+    let self = this;
+    AllergyIntolerances.remove({_id: this.state.allergyIntoleranceId}, function(error, result){
       if (error) {
         Bert.alert(error.reason, 'danger');
       }
       if (result) {
-        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: Session.get('selectedAllergyIntolerance')});
+        HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
         Session.set('allergyIntolerancePageTabIndex', 1);
         Session.set('selectedAllergyIntolerance', false);
-        Session.set('allergyIntoleranceUpsert', false);
         Bert.alert('AllergyIntolerance removed!', 'success');
       }
     });
@@ -595,7 +591,10 @@ export class AllergyIntoleranceDetail extends React.Component {
 }
 
 AllergyIntoleranceDetail.propTypes = {
-  hasUser: PropTypes.object
+  id: PropTypes.string,
+  fhirVersion: PropTypes.string,
+  allergyIntoleranceId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  allergyIntolerance: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
 };
 ReactMixin(AllergyIntoleranceDetail.prototype, ReactMeteorData);
 export default AllergyIntoleranceDetail;

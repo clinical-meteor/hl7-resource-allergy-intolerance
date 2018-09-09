@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-resource-allergy-intolerance',
-  version: '1.3.4',
+  version: '1.3.5',
   summary: 'HL7 FHIR Resource - AllergyIntolerance',
   git: 'https://github.com/clinical-meteor/hl7-resource-allergy-intolerance',
   documentation: 'README.md'
@@ -17,10 +17,6 @@ Package.onUse(function (api) {
   api.use('clinical:hl7-resource-datatypes@4.0.0');
   api.use('clinical:hl7-resource-bundle@1.4.0');
 
-  // api.use('aldeed:simple-schema@1.3.3');
-  // api.use('aldeed:collection2@2.5.0');
-  // api.use('clinical:hl7-resource-datatypes@3.0.1');
-
   api.use('simple:json-routes@2.1.0');
   api.use('momentjs:moment@2.17.1');
 
@@ -31,7 +27,7 @@ Package.onUse(function (api) {
   api.use('clinical:glass-ui@2.2.4');
   api.use('clinical:extended-api@2.2.2');
   api.use('clinical:base-model@1.4.0');
-  api.use('clinical:user-model@1.5.0');
+  api.use('clinical:user-model@1.6.2');
   api.use('matb33:collection-hooks@0.7.15');
   api.use('clinical:alert@2.1.3');
 
