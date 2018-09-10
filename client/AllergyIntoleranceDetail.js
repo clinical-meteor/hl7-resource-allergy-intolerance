@@ -323,6 +323,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelText='Patient'
                 value={ get(formData, 'patientDisplay', '') }
                 onChange={ this.changeState.bind(this, 'patientDisplay')}
+                hintText="Jane Doe"
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
@@ -335,6 +336,7 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelText='Recorder'
                 value={ get(formData, 'recorderDisplay', '') }
                 onChange={ this.changeState.bind(this, 'recorderDisplay')}
+                hintText="Nurse Jackie"
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
@@ -525,17 +527,15 @@ export class AllergyIntoleranceDetail extends React.Component {
 
     if(process.env.NODE_ENV === "test") console.log('fhirAllergyData', fhirAllergyData);
 
+    let schemaConfig = get(Meteor, 'settings.public.defaults.schemas')
+    if(process.env.NODE_ENV === "test") console.log('Meteor.settings.public.defaults.schemas', schemaConfig);
 
     if (this.state.allergyIntoleranceId) {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
       delete fhirAllergyData._id;
 
       AllergyIntolerances.update(
-        {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, {
-          validate: true, 
-          filter: false, 
-          removeEmptyStrings: false
-        }, function(error, result) {
+        {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, schemaConfig, function(error, result) {
           if (error) {
             console.log("error", error);
             Bert.alert(error.reason, 'danger');
@@ -552,9 +552,8 @@ export class AllergyIntoleranceDetail extends React.Component {
       if(process.env.NODE_ENV === "test") console.log("Create a new allergyIntolerance", fhirAllergyData);
 
       AllergyIntolerances.insert(fhirAllergyData, {
-        validate: true, 
-        filter: false, 
-        removeEmptyStrings: false
+        validate: false,
+        filter: false
       }, function(error, result) {
         if (error) {
           console.log("error", error);
