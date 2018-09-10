@@ -534,8 +534,8 @@ export class AllergyIntoleranceDetail extends React.Component {
       if(process.env.NODE_ENV === "test") console.log("Updating allergyIntolerance...");
       delete fhirAllergyData._id;
 
-      AllergyIntolerances.update(
-        {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, schemaConfig, function(error, result) {
+      AllergyIntolerances._collection.update(
+        {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, function(error, result) {
           if (error) {
             console.log("error", error);
             Bert.alert(error.reason, 'danger');
@@ -551,10 +551,7 @@ export class AllergyIntoleranceDetail extends React.Component {
 
       if(process.env.NODE_ENV === "test") console.log("Create a new allergyIntolerance", fhirAllergyData);
 
-      AllergyIntolerances.insert(fhirAllergyData, {
-        validate: false,
-        filter: false
-      }, function(error, result) {
+      AllergyIntolerances._collection.insert(fhirAllergyData, function(error, result) {
         if (error) {
           console.log("error", error);
           Bert.alert(error.reason, 'danger');
