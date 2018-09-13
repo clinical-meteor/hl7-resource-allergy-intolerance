@@ -572,7 +572,7 @@ export class AllergyIntoleranceDetail extends React.Component {
 
   handleDeleteButton(){
     let self = this;
-    AllergyIntolerances.remove({_id: this.state.allergyIntoleranceId}, function(error, result){
+    AllergyIntolerances._collection.remove({_id: this.state.allergyIntoleranceId}, function(error, result){
       if (error) {
         Bert.alert(error.reason, 'danger');
       }
