@@ -106,7 +106,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderTogglesHeader(displayToggle){
     if (displayToggle) {
       return (
-        <th className="toggle">toggle</th>
+        <th className="toggle">Toggle</th>
       );
     }
   }
@@ -125,7 +125,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderIdentifierHeader(displayIdentifier){
     if (displayIdentifier) {
       return (
-        <th className="identifier">identifier</th>
+        <th className="identifier">Identifier</th>
       );
     }
   }
@@ -140,7 +140,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderDateHeader(displayDates){
     if (displayDates) {
       return (
-        <th className='date'>date</th>
+        <th className='date'>Date</th>
       );
     }
   }
@@ -157,7 +157,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderClinicalStatusHeader(displayStatus){
     if (displayStatus) {
       return (
-        <th className="clinicalStatus">status</th>
+        <th className="clinicalStatus">Status</th>
       );
     }
   }
@@ -171,7 +171,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderVerificationStatusHeader(displayVerification){
     if (displayVerification) {
       return (
-        <th className="verificationStatus">verification</th>
+        <th className="verificationStatus">Verification</th>
       );
     }
   }
@@ -186,7 +186,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderTypeHeader(displayType){
     if (displayType) {
       return (
-        <th className="type">type</th>
+        <th className="type">Type</th>
       );
     }
   }
@@ -199,7 +199,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderCategoryHeader(displayCategory){
     if (displayCategory) {
       return (
-        <th className="category">category</th>
+        <th className="category">Category</th>
       );
     }
   }
@@ -254,6 +254,11 @@ export class AllergyIntolerancesTable extends React.Component {
       newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].description');
       newRow.onset = moment(get(this.data.allergyIntolerances[i], 'reaction[0].onset')).format("YYYY-MM-DD");
 
+      // DSTU v4
+      if(get(this.data.allergyIntolerances[i], 'onsetDateTime')){
+        newRow.onset = moment(get(this.data.allergyIntolerances[i], 'onsetDateTime')).format("YYYY-MM-DD");
+      }
+
       if(get(this.data.allergyIntolerances[i], 'criticality')){
         switch (get(this.data.allergyIntolerances[i], 'criticality')) {
           case "CRITL":
@@ -283,7 +288,6 @@ export class AllergyIntolerancesTable extends React.Component {
           <td className='recorder'>{ newRow.recorder }</td>
           <td className='onset'>{ newRow.onset }</td>
           { this.renderClinicalStatus(this.data.displayStatus, this.data.allergyIntolerances[i]) }
-          { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
           { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
           { this.renderDate(this.data.displayDates, this.data.allergyIntolerances[i].assertedDate) }
         </tr>
