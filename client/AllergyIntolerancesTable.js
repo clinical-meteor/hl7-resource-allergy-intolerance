@@ -7,7 +7,7 @@
 // =======================================================================
 
 
-import { Card, CardActions, CardMedia, CardText, CardTitle } from 'material-ui/Card';
+import { Card, CardActions, CardMedia, CardText, CardTitle, Toggle } from 'material-ui';
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -17,6 +17,8 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { moment } from 'meteor/momentjs:moment';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+
 
 export class AllergyIntolerancesTable extends React.Component {
 
@@ -39,43 +41,43 @@ export class AllergyIntolerancesTable extends React.Component {
 
     // STU3 v3.0.1
     if(this.props.displayStatus){
-      data.displayStatus = this.props.displayStatus;
+      data.hideStatus = this.props.displayStatus;
     }
     if(this.props.displayVerification){
-      data.displayVerification = this.props.displayVerification;
+      data.hideVerification = this.props.displayVerification;
     }
 
 
     // DSTU2 v1.0.2
     if(this.props.displayIdentifier){
-      data.displayIdentifier = this.props.displayIdentifier;
+      data.hideIdentifier = this.props.displayIdentifier;
     }
     if(this.props.displayType){
-      data.displayType = this.props.displayType;
+      data.hideType = this.props.displayType;
     }
     if(this.props.displayCategory){
-      data.displayCategory = this.props.displayCategory;
+      data.hideCategory = this.props.displayCategory;
     }
     if(this.props.fhirVersion){
       data.fhirVersion = this.props.fhirVersion;
       switch (this.props.fhirVersion) {
         case 'v1.0.2':
-            data.displayToggle = false;
-            data.displayDates = true;
-            data.displayIdentifier = true;
-            data.displayStatus = false;
-            data.displayVerification = false;
-            data.displayType = true;
-            data.displayCategory = true;
+            data.hideToggle = false;
+            data.hideDates = true;
+            data.hideIdentifier = true;
+            data.hideStatus = false;
+            data.hideVerification = false;
+            data.hideType = true;
+            data.hideCategory = true;
           break;      
         case 'v3.0.1':
-          data.displayToggle = false;
-          data.displayDates = true;
-          data.displayIdentifier = true;
-          data.displayStatus = true;
-          data.displayVerification = true;
-          data.displayType = true;
-          data.displayCategory = true;
+          data.hideToggle = false;
+          data.hideDates = true;
+          data.hideIdentifier = true;
+          data.hideStatus = true;
+          data.hideVerification = true;
+          data.hideType = true;
+          data.hideCategory = true;
         break;      
       default:
           break;
@@ -83,11 +85,11 @@ export class AllergyIntolerancesTable extends React.Component {
     }
 
     // Workflow Items
-    if(this.props.displayToggles){
-      data.displayToggle = this.props.displayToggles;
+    if(this.props.hideToggle){
+      data.hideToggle = this.props.hideToggle;
     }
     if(this.props.displayDates){
-      data.displayDates = this.props.displayDates;
+      data.hideDates = this.props.displayDates;
     }
 
     // Data
@@ -103,15 +105,15 @@ export class AllergyIntolerancesTable extends React.Component {
     return data;
   };
 
-  renderTogglesHeader(displayToggle){
-    if (displayToggle) {
+  renderTogglesHeader(){
+    if (!this.props.hideToggle) {
       return (
         <th className="toggle">Toggle</th>
       );
     }
   }
-  renderToggles(displayToggle, patientId ){
-    if (displayToggle) {
+  renderToggles(patientId ){
+    if (!this.props.hideToggle) {
       return (
         <td className="toggle">
             <Toggle
@@ -122,30 +124,30 @@ export class AllergyIntolerancesTable extends React.Component {
     }
   }
 
-  renderIdentifierHeader(displayIdentifier){
-    if (displayIdentifier) {
+  renderIdentifierHeader(){
+    if (!this.props.hideIdentifier) {
       return (
         <th className="identifier">Identifier</th>
       );
     }
   }
-  renderIdentifier(displayIdentifier, allergyIntolerances ){
-    if (displayIdentifier) {
+  renderIdentifier(allergyIntolerance){
+    if (!this.props.hideIdentifier) {
       
       return (
-        <td className='identifier'>{ get(allergyIntolerances, 'identifier[0].value') }</td>       );
+        <td className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</td>       );
     }
   }
 
-  renderDateHeader(displayDates){
-    if (displayDates) {
+  renderDateHeader(){
+    if (!this.props.hideDate) {
       return (
         <th className='date'>Date</th>
       );
     }
   }
-  renderDate(displayDates, newDate ){
-    if (displayDates) {
+  renderDate(newDate){
+    if (!this.props.hideDate) {
       return (
         <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
       );
@@ -154,59 +156,85 @@ export class AllergyIntolerancesTable extends React.Component {
 
 
 
-  renderClinicalStatusHeader(displayStatus){
-    if (displayStatus) {
+  renderClinicalStatusHeader(){
+    if (!this.props.hideStatus) {
       return (
         <th className="clinicalStatus">Status</th>
       );
     }
   }
-  renderClinicalStatus(displayStatus, allergyIntolerances ){
-    if (displayStatus) {
+  renderClinicalStatus(allergyIntolerances ){
+    if (!this.props.hideStatus) {
       return (
         <td className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</td>       );
     }
   }
 
-  renderVerificationStatusHeader(displayVerification){
-    if (displayVerification) {
+  renderVerificationStatusHeader(){
+    if (!this.props.hideVerification) {
       return (
         <th className="verificationStatus">Verification</th>
       );
     }
   }
-  renderVerificationStatus(displayVerification, allergyIntolerances ){
-    if (displayVerification) {
+  renderVerificationStatus(allergyIntolerances ){
+    if (!this.props.hideVerification) {
       return (
         <td className='verificationStatus'>{ get(allergyIntolerances, 'verificationStatus') }</td>       );
     }
   }
 
 
-  renderTypeHeader(displayType){
-    if (displayType) {
+  renderTypeHeader(){
+    if (!this.props.hideType) {
       return (
         <th className="type">Type</th>
       );
     }
   }
-  renderType(displayType, allergyIntolerances ){
-    if (displayType) {
+  renderType(allergyIntolerances ){
+    if (!this.props.hideType) {
       return (
         <td className='type'>{ get(allergyIntolerances, 'type') }</td>       );
     }
   }
-  renderCategoryHeader(displayCategory){
-    if (displayCategory) {
+  renderCategoryHeader(){
+    if (!this.props.hideCategory) {
       return (
         <th className="category">Category</th>
       );
     }
   }
-  renderCategory(displayCategory, allergyIntolerances ){
-    if (displayCategory) {
+  renderCategory(allergyIntolerances ){
+    if (!this.props.hideCategory) {
       return (
         <td className='category'>{ get(allergyIntolerances, 'category[0]') }</td>       );
+    }
+  }
+  renderPatientHeader(){
+    if (!this.props.hidePatient) {
+      return (
+        <th className="patient">Patient</th>
+      );
+    }
+  }
+  renderPatient(allergyIntolerances ){
+    if (!this.props.hidePatient) {
+      return (
+        <td className='patient'>{ get(allergyIntolerances, 'patient.display') }</td>       );
+    }
+  }
+  renderRecorderHeader(){
+    if (!this.props.hideRecorder) {
+      return (
+        <th className="recorder">Recorder</th>
+      );
+    }
+  }
+  renderRecorder(allergyIntolerances ){
+    if (!this.props.hideRecorder) {
+      return (
+        <td className='patient'>{ get(allergyIntolerances, 'recorder.display') }</td>       );
     }
   }
 
@@ -278,18 +306,20 @@ export class AllergyIntolerancesTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="allergyIntoleranceRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
-          { this.renderToggles(this.data.displayToggle, this.data.allergyIntolerances[i]) }
-          { this.renderIdentifier(this.data.displayIdentifier, this.data.allergyIntolerances[i]) }
+          { this.renderToggles(this.data.allergyIntolerances[i]) }
+          { this.renderIdentifier(this.data.allergyIntolerances[i]) }
           <td className='reaction'>{ newRow.reaction }</td>
           <td className='criticality'>{ newRow.criticality }</td>
-          { this.renderType(this.data.displayType, this.data.allergyIntolerances[i]) }
-          { this.renderCategory(this.data.displayCategory, this.data.allergyIntolerances[i]) }
-          <td className='patient'>{ newRow.patient }</td>
-          <td className='recorder'>{ newRow.recorder }</td>
+          { this.renderType(this.data.allergyIntolerances[i]) }
+          { this.renderCategory(this.data.allergyIntolerances[i]) }
+          { this.renderPatient(this.data.allergyIntolerances[i]) }
+          { this.renderRecorder(this.data.allergyIntolerances[i]) }
+          {/* <td className='patient'>{ newRow.patient }</td> */}
+          {/* <td className='recorder'>{ newRow.recorder }</td> */}
           <td className='onset'>{ newRow.onset }</td>
-          { this.renderClinicalStatus(this.data.displayStatus, this.data.allergyIntolerances[i]) }
-          { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
-          { this.renderDate(this.data.displayDates, this.data.allergyIntolerances[i].assertedDate) }
+          { this.renderClinicalStatus(this.data.allergyIntolerances[i]) }
+          { this.renderVerificationStatus(this.data.allergyIntolerances[i]) }
+          { this.renderDate(this.data.allergyIntolerances[i]) }
         </tr>
       )
     }
@@ -298,18 +328,20 @@ export class AllergyIntolerancesTable extends React.Component {
       <Table id='allergyIntolerancesTable' hover >
         <thead>
           <tr>
-            { this.renderTogglesHeader(this.data.displayToggle) }
-            { this.renderIdentifierHeader(this.data.displayIdentifier) }
+            { this.renderTogglesHeader() }
+            { this.renderIdentifierHeader() }
             <th className='reaction'>Reaction</th>
             <th className='criticality'>Criticality</th>
-            { this.renderTypeHeader(this.data.displayType) }
-            { this.renderCategoryHeader(this.data.displayCategory) }
-            <th className='patient'>Patient</th>
-            <th className='recorder'>Recorder</th>
+            { this.renderTypeHeader() }
+            { this.renderCategoryHeader() }
+            { this.renderPatientHeader() }
+            { this.renderRecorderHeader() }
+            {/* <th className='patient'>Patient</th> */}
+            {/* <th className='recorder'>Recorder</th> */}
             <th className='onsert'>Onset</th>
-            { this.renderClinicalStatusHeader(this.data.displayStatus) }
-            { this.renderVerificationStatusHeader(this.data.displayVerification) }
-            { this.renderDateHeader(this.data.displayDates) }
+            { this.renderClinicalStatusHeader() }
+            { this.renderVerificationStatusHeader() }
+            { this.renderDateHeader() }
           </tr>
         </thead>
         <tbody>
@@ -319,6 +351,33 @@ export class AllergyIntolerancesTable extends React.Component {
     );
   }
 }
+
+
+AllergyIntolerancesTable.propTypes = {
+  id: PropTypes.string,
+  fhirVersion: PropTypes.string,
+
+  hideToggle: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideDate: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideVerification: PropTypes.bool,
+  hideType: PropTypes.bool,
+  hideCategory: PropTypes.bool,
+
+  hidePatient: PropTypes.bool,
+  hideRecorder: PropTypes.bool,
+  sourceReference: PropTypes.bool,
+  disableBarcodes: PropTypes.bool,
+  limit: PropTypes.number,
+  query: PropTypes.object,
+  patient: PropTypes.string,
+  patientDisplay: PropTypes.string,
+  sort: PropTypes.string
+  // onPatientClick: PropTypes.func
+};
+
+
 
 ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
 export default AllergyIntolerancesTable;
