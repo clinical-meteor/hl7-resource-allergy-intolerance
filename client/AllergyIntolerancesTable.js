@@ -7,7 +7,7 @@
 // =======================================================================
 
 
-import { Card, CardActions, CardMedia, CardText, CardTitle } from 'material-ui/Card';
+import { Card, CardActions, CardMedia, CardText, CardTitle, Toggle } from 'material-ui';
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -17,6 +17,9 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { moment } from 'meteor/momentjs:moment';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
 
 export class AllergyIntolerancesTable extends React.Component {
 
@@ -103,15 +106,15 @@ export class AllergyIntolerancesTable extends React.Component {
     return data;
   };
 
-  renderTogglesHeader(displayToggle){
-    if (displayToggle) {
+  renderTogglesHeader(){
+    if (!this.props.hideToggle) {
       return (
         <th className="toggle">Toggle</th>
       );
     }
   }
-  renderToggles(displayToggle, patientId ){
-    if (displayToggle) {
+  renderToggles(patientId ){
+    if (!this.props.hideToggle) {
       return (
         <td className="toggle">
             <Toggle
@@ -122,30 +125,30 @@ export class AllergyIntolerancesTable extends React.Component {
     }
   }
 
-  renderIdentifierHeader(displayIdentifier){
-    if (displayIdentifier) {
+  renderIdentifierHeader(){
+    if (!this.props.hideIdentifier) {
       return (
         <th className="identifier">Identifier</th>
       );
     }
   }
-  renderIdentifier(displayIdentifier, allergyIntolerances ){
-    if (displayIdentifier) {
+  renderIdentifier(allergyIntolerances ){
+    if (!this.props.hideIdentifier) {
       
       return (
         <td className='identifier'>{ get(allergyIntolerances, 'identifier[0].value') }</td>       );
     }
   }
 
-  renderDateHeader(displayDates){
-    if (displayDates) {
+  renderDateHeader(){
+    if (!this.props.hideDates) {
       return (
         <th className='date'>Date</th>
       );
     }
   }
-  renderDate(displayDates, newDate ){
-    if (displayDates) {
+  renderDate(newDate ){
+    if (!this.props.hideDates) {
       return (
         <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
       );
@@ -154,62 +157,109 @@ export class AllergyIntolerancesTable extends React.Component {
 
 
 
-  renderClinicalStatusHeader(displayStatus){
-    if (displayStatus) {
+  renderClinicalStatusHeader(){
+    if (!this.props.hideStatus) {
       return (
         <th className="clinicalStatus">Status</th>
       );
     }
   }
-  renderClinicalStatus(displayStatus, allergyIntolerances ){
-    if (displayStatus) {
+  renderClinicalStatus(allergyIntolerances ){
+    if (!this.props.hideStatus) {
       return (
         <td className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</td>       );
     }
   }
 
-  renderVerificationStatusHeader(displayVerification){
-    if (displayVerification) {
+  renderRecorderHeader(){
+    if (!this.props.hideStatus) {
+      return (
+        <th className="clinicalStatus">Status</th>
+      );
+    }
+  }
+  renderRecorder(allergyIntolerances ){
+    if (!this.props.hideRecorder) {
+      return (
+        <td className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</td>       );
+    }
+  }
+
+
+  renderVerificationStatusHeader(){
+    if (!this.props.hideVerification) {
       return (
         <th className="verificationStatus">Verification</th>
       );
     }
   }
-  renderVerificationStatus(displayVerification, allergyIntolerances ){
-    if (displayVerification) {
+  renderVerificationStatus(allergyIntolerances ){
+    if (!this.props.hideVerification) {
       return (
         <td className='verificationStatus'>{ get(allergyIntolerances, 'verificationStatus') }</td>       );
     }
   }
 
 
-  renderTypeHeader(displayType){
-    if (displayType) {
+  renderTypeHeader(){
+    if (!this.props.hideType) {
       return (
         <th className="type">Type</th>
       );
     }
   }
-  renderType(displayType, allergyIntolerances ){
-    if (displayType) {
+  renderType(allergyIntolerances ){
+    if (!this.props.hideType) {
       return (
         <td className='type'>{ get(allergyIntolerances, 'type') }</td>       );
     }
   }
-  renderCategoryHeader(displayCategory){
-    if (displayCategory) {
+  renderCategoryHeader(){
+    if (!this.props.hideCategory) {
       return (
         <th className="category">Category</th>
       );
     }
   }
-  renderCategory(displayCategory, allergyIntolerances ){
-    if (displayCategory) {
+  renderCategory(allergyIntolerances ){
+    if (!this.props.hideCategory) {
       return (
         <td className='category'>{ get(allergyIntolerances, 'category[0]') }</td>       );
     }
   }
-
+  renderActionIconsHeader(){
+    if (!this.props.hideActionIcons) {
+      return (
+        <th className='actionIcons' style={{minWidth: '120px'}}>Actions</th>
+      );
+    }
+  }
+  renderActionIcons(actionIcons ){
+    if (!this.props.hideActionIcons) {
+      return (
+        <td className='actionIcons' style={{minWidth: '120px'}}>
+          <FaLock style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaTags style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaCode style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaPuzzlePiece style={{marginLeft: '2px', marginRight: '2px'}} />          
+        </td>
+      );
+    }
+  } 
+  renderPatientNameHeader(){
+    if (!this.props.hidePatient) {
+      return (
+        <th className='patientDisplay'>Patient</th>
+      );
+    }
+  }
+  renderPatientName(patientDisplay ){
+    if (!this.props.hidePatient) {
+      return (
+        <td className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</td>
+      );
+    }
+  }
   rowClick(id){
     Session.set('allergyIntolerancesUpsert', false);
     Session.set('selectedAllergyIntolerance', id);
@@ -234,6 +284,7 @@ export class AllergyIntolerancesTable extends React.Component {
         patient: '',
         recorder: '', 
         reaction: '',
+        substance: '',
         onset: ''
       };
 
@@ -242,6 +293,7 @@ export class AllergyIntolerancesTable extends React.Component {
       newRow.verificationStatus = get(this.data.allergyIntolerances[i], 'verificationStatus');
       newRow.type = get(this.data.allergyIntolerances[i], 'type');
       newRow.category = get(this.data.allergyIntolerances[i], 'category[0]');
+      newRow.substance = get(this.data.allergyIntolerances[i], 'substance.coding[0].display');
 
       if(get(this.data.allergyIntolerances[i], 'code.coding[0]')){            
         newRow.snomedCode = get(this.data.allergyIntolerances[i], 'code.coding[0].code');
@@ -251,12 +303,15 @@ export class AllergyIntolerancesTable extends React.Component {
       // DSTU2 v1.0.2
       newRow.patient = get(this.data.allergyIntolerances[i], 'patient.display');
       newRow.recorder = get(this.data.allergyIntolerances[i], 'recorder.display');
-      newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].description');
+      newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].description', '');
       newRow.onset = moment(get(this.data.allergyIntolerances[i], 'reaction[0].onset')).format("YYYY-MM-DD");
 
       // DSTU v4
       if(get(this.data.allergyIntolerances[i], 'onsetDateTime')){
         newRow.onset = moment(get(this.data.allergyIntolerances[i], 'onsetDateTime')).format("YYYY-MM-DD");
+      }
+      if(get(this.data.allergyIntolerances[i], 'reaction[0].manifestation[0].text')){
+        newRow.reaction = get(this.data.allergyIntolerances[i], 'reaction[0].manifestation[0].text', '');
       }
 
       if(get(this.data.allergyIntolerances[i], 'criticality')){
@@ -278,18 +333,21 @@ export class AllergyIntolerancesTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="allergyIntoleranceRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
-          { this.renderToggles(this.data.displayToggle, this.data.allergyIntolerances[i]) }
-          { this.renderIdentifier(this.data.displayIdentifier, this.data.allergyIntolerances[i]) }
+          { this.renderToggles(this.data.allergyIntolerances[i]) }
+          { this.renderActionIcons(this.data.allergyIntolerances[i]) }
+          { this.renderIdentifier(this.data.allergyIntolerances[i]) }
+          <td className='substance'>{ newRow.substance }</td>
           <td className='reaction'>{ newRow.reaction }</td>
           <td className='criticality'>{ newRow.criticality }</td>
-          { this.renderType(this.data.displayType, this.data.allergyIntolerances[i]) }
-          { this.renderCategory(this.data.displayCategory, this.data.allergyIntolerances[i]) }
-          <td className='patient'>{ newRow.patient }</td>
+          { this.renderType(this.data.allergyIntolerances[i]) }
+          { this.renderCategory(this.data.allergyIntolerances[i]) }
+          { this.renderPatientName(newRow.patientDisplay ) } 
+          {/* <td className='patient'>{ newRow.patient }</td> */}
           <td className='recorder'>{ newRow.recorder }</td>
           <td className='onset'>{ newRow.onset }</td>
-          { this.renderClinicalStatus(this.data.displayStatus, this.data.allergyIntolerances[i]) }
-          { this.renderVerificationStatus(this.data.displayVerification, this.data.allergyIntolerances[i]) }
-          { this.renderDate(this.data.displayDates, this.data.allergyIntolerances[i].assertedDate) }
+          { this.renderClinicalStatus(this.data.allergyIntolerances[i]) }
+          { this.renderVerificationStatus(this.data.allergyIntolerances[i]) }
+          {/* { this.renderDate(this.data.allergyIntolerances[i].assertedDate) } */}
         </tr>
       )
     }
@@ -298,18 +356,21 @@ export class AllergyIntolerancesTable extends React.Component {
       <Table id='allergyIntolerancesTable' hover >
         <thead>
           <tr>
-            { this.renderTogglesHeader(this.data.displayToggle) }
-            { this.renderIdentifierHeader(this.data.displayIdentifier) }
+            { this.renderTogglesHeader() }
+            { this.renderActionIconsHeader() }
+            { this.renderIdentifierHeader() }
+            <th className='substance'>Substance</th>
             <th className='reaction'>Reaction</th>
             <th className='criticality'>Criticality</th>
-            { this.renderTypeHeader(this.data.displayType) }
-            { this.renderCategoryHeader(this.data.displayCategory) }
-            <th className='patient'>Patient</th>
-            <th className='recorder'>Recorder</th>
+            { this.renderTypeHeader() }
+            { this.renderCategoryHeader() }
+            { this.renderPatientNameHeader() }
+            {/* <th className='patient' style={{minWidth: '140px'}}>Patient</th> */}
+            <th className='recorder'  style={{minWidth: '140px'}}>Recorder</th>
             <th className='onsert'>Onset</th>
-            { this.renderClinicalStatusHeader(this.data.displayStatus) }
-            { this.renderVerificationStatusHeader(this.data.displayVerification) }
-            { this.renderDateHeader(this.data.displayDates) }
+            { this.renderClinicalStatusHeader() }
+            { this.renderVerificationStatusHeader() }
+            {/* { this.renderDateHeader() } */}
           </tr>
         </thead>
         <tbody>
@@ -320,5 +381,21 @@ export class AllergyIntolerancesTable extends React.Component {
   }
 }
 
+
+AllergyIntolerancesTable.propTypes = {
+  data: PropTypes.array,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  hideIdentifier: PropTypes.bool,
+  hideToggle: PropTypes.bool,
+  hideActionIcons: PropTypes.bool,
+  hideType: PropTypes.bool,
+  hideCategory: PropTypes.bool,
+  hidePatient: PropTypes.bool,
+  hideRecorder: PropTypes.bool,
+  hideStatus: PropTypes.bool,
+  hideVerification: PropTypes.bool,
+  enteredInError: PropTypes.bool
+};
 ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
 export default AllergyIntolerancesTable;
