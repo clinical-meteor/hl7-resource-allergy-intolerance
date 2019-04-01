@@ -132,7 +132,7 @@ export class AllergyIntolerancesTable extends React.Component {
       );
     }
   }
-  renderIdentifier(allergyIntolerances ){
+  renderIdentifier(allergyIntolerance ){
     if (!this.props.hideIdentifier) {
       
       return (
