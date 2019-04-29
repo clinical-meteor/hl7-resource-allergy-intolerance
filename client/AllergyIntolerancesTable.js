@@ -20,6 +20,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
+import { GoTrashcan } from 'react-icons/go'
 
 export class AllergyIntolerancesTable extends React.Component {
 
@@ -105,7 +106,18 @@ export class AllergyIntolerancesTable extends React.Component {
     if(process.env.NODE_ENV === "test") console.log("AllergyIntolerancesTable[data]", data);
     return data;
   };
+  removeRecord(_id){
+    console.log('Remove allergy ', _id)
+    AllergyIntolerances._collection.remove({_id: _id})
+  }
+  showSecurityDialog(allergy){
+    console.log('showSecurityDialog', allergy)
 
+    Session.set('securityDialogResourceJson', AllergyIntolerances.findOne(get(allergy, '_id')));
+    Session.set('securityDialogResourceType', 'AllergyIntolerance');
+    Session.set('securityDialogResourceId', get(allergy, '_id'));
+    Session.set('securityDialogOpen', true);
+  }
   renderTogglesHeader(){
     if (!this.props.hideToggle) {
       return (
@@ -234,14 +246,20 @@ export class AllergyIntolerancesTable extends React.Component {
       );
     }
   }
-  renderActionIcons(actionIcons ){
+  renderActionIcons(allergyIntolerance ){
     if (!this.props.hideActionIcons) {
+
+      let iconStyle = {
+        marginLeft: '4px', 
+        marginRight: '4px', 
+        marginTop: '4px', 
+        fontSize: '120%'
+      }
+
       return (
         <td className='actionIcons' style={{minWidth: '120px'}}>
-          <FaLock style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaTags style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaCode style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaPuzzlePiece style={{marginLeft: '2px', marginRight: '2px'}} />          
+          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, allergyIntolerance)} />
+          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, allergyIntolerance._id)} />  
         </td>
       );
     }
@@ -331,8 +349,15 @@ export class AllergyIntolerancesTable extends React.Component {
         }
       };
 
+      let rowStyle = {
+        cursor: 'pointer'
+      }
+      if(get(this.data.allergyIntolerances[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+
       tableRows.push(
-        <tr key={i} className="allergyIntoleranceRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
+        <tr key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
           { this.renderToggles(this.data.allergyIntolerances[i]) }
           { this.renderActionIcons(this.data.allergyIntolerances[i]) }
           { this.renderIdentifier(this.data.allergyIntolerances[i]) }
@@ -397,5 +422,6 @@ AllergyIntolerancesTable.propTypes = {
   hideVerification: PropTypes.bool,
   enteredInError: PropTypes.bool
 };
+
 ReactMixin(AllergyIntolerancesTable.prototype, ReactMeteorData);
 export default AllergyIntolerancesTable;
