@@ -8,7 +8,7 @@
 
 import { CardText, CardTitle } from 'material-ui/Card';
 import {Tab, Tabs} from 'material-ui/Tabs';
-import { GlassCard, VerticalCanvas, Glass } from 'meteor/clinical:glass-ui';
+import { GlassCard, VerticalCanvas, FullPageCanvas, Glass } from 'meteor/clinical:glass-ui';
 
 import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
 import AllergyIntolerancesTable from './AllergyIntolerancesTable';
@@ -65,7 +65,7 @@ export class AllergyIntolerancesPage extends React.Component {
     if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
     return (
       <div id='allergyIntolerancesPage'>
-        <VerticalCanvas>
+        <FullPageCanvas>
           <GlassCard height='auto'>
             <CardTitle title='Allergy Intolerances' />
             <CardText>
@@ -74,6 +74,7 @@ export class AllergyIntolerancesPage extends React.Component {
                  <AllergyIntoleranceDetail 
                   id='newAllergyIntolerance' 
                   fhirVersion={ this.data.fhirVersion }
+                  showDatePicker={true} 
                   allergy={ this.data.selectedAllergy }
                   allergyIntoleranceId={ this.data.allergyIntoleranceId } />
                </Tab>
@@ -91,7 +92,7 @@ export class AllergyIntolerancesPage extends React.Component {
              </Tabs>
             </CardText>
           </GlassCard>
-        </VerticalCanvas>
+        </FullPageCanvas>
       </div>
     );
   }

@@ -179,7 +179,7 @@ export class AllergyIntoleranceDetail extends React.Component {
       return (
         <DatePicker 
           name='datePicker'
-          hintText="Date of Confirmation" 
+          hintText="Onset Date" 
           container="inline" 
           mode="landscape"
           value={ datePickerValue ? datePickerValue : null}    
@@ -400,6 +400,7 @@ export class AllergyIntoleranceDetail extends React.Component {
         break;
       case "datePicker":
         set(formData, 'onsetDateTime', textValue)
+        set(formData, 'onset', textValue)
         break;
       case "criticality":
         set(formData, 'criticality', textValue)
@@ -478,6 +479,7 @@ export class AllergyIntoleranceDetail extends React.Component {
         break;
       case "datePicker":
         set(allergyData, 'onsetDateTime', textValue)
+        set(allergyData, 'onset', textValue)
         break;
       case "criticality":
         switch (textValue) {
