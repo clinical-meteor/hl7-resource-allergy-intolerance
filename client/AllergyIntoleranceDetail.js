@@ -12,7 +12,7 @@ import { Col, Grid, Row } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import React, { Component } from 'react';
-import update from 'immutability-helper';
+// import update from 'immutability-helper';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import { browserHistory } from 'react-router';
