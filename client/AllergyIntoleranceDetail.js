@@ -6,17 +6,26 @@
 //
 // =======================================================================
 
-import { CardActions, CardText, DatePicker, RaisedButton, TextField, SelectField, MenuItem } from 'material-ui';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { 
+  Button,
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  TextField,
+  Grid,
+  Select,
+  MenuItem,
+} from '@material-ui/core';
+
+import { get, set, setWith } from 'lodash';
 
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
+
 import React, { Component } from 'react';
-// import update from 'immutability-helper';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import { browserHistory } from 'react-router';
-import { get, set, setWith, clone, cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
 
@@ -171,109 +180,98 @@ export class AllergyIntoleranceDetail extends React.Component {
     console.log('AllergyIntoleranceDetail[data]', data);
     return data;
   }
-  renderDatePicker(showDatePicker, datePickerValue){
-    if (typeof datePickerValue === "string"){
-      datePickerValue = new Date(datePickerValue);
-    }
-    if (showDatePicker) {
-      return (
-        <DatePicker 
-          name='datePicker'
-          hintText="Onset Date" 
-          container="inline" 
-          mode="landscape"
-          value={ datePickerValue ? datePickerValue : null}    
-          onChange={ this.changeState.bind(this, 'datePicker')}      
-          />
-      );
-    }
-  }
+  // renderDatePicker(showDatePicker, datePickerValue){
+  //   if (typeof datePickerValue === "string"){
+  //     datePickerValue = new Date(datePickerValue);
+  //   }
+  //   if (showDatePicker) {
+  //     return (
+  //       <DatePicker 
+  //         name='datePicker'
+  //         hintText="Onset Date" 
+  //         container="inline" 
+  //         mode="landscape"
+  //         value={ datePickerValue ? datePickerValue : null}    
+  //         onChange={ this.changeState.bind(this, 'datePicker')}      
+  //         />
+  //     );
+  //   }
+  // }
   render() {
     if(process.env.NODE_ENV === "test") console.log('AllergyIntoleranceDetail.render()', this.state)
     let formData = this.state.form;
 
     return (
       <div id={this.props.id} className="allergyIntoleranceDetail">
-        <CardText>
-          <Row>
-            <Col md={3} >
-              <SelectField
+        <CardContent>
+          <Grid container spacing={3}>
+            <Grid item xs={3}>
+              <Select
                 id='clinicalStatusInput'
-                ref='clinicalStatus'
                 name='clinicalStatus'
-                floatingLabelText='Clinical Status'
+                //floatingLabelText='Clinical Status'
                 value={ get(formData, 'clinicalStatus', '') }
                 onChange={ this.changeState.bind(this, 'clinicalStatus')}
-                floatingLabelFixed={true}
+                //floatingLabelFixed={true}
                 fullWidth
               >
-                <MenuItem value={0} primaryText="active" />
-                <MenuItem value={1} primaryText="inactive" />
-                <MenuItem value={2} primaryText="resolved" />
-              </SelectField>
-
-
-            </Col>
-            <Col md={3} >
-              <SelectField
+                <MenuItem value={0} >active</MenuItem>
+                <MenuItem value={1} >inactive</MenuItem>
+                <MenuItem value={2} >resolved</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={3}>
+             <Select
                 id='verificationStatusInput'
-                ref='verificationStatus'
                 name='verificationStatus'
-                floatingLabelText='Verification Status'
+                //floatingLabelText='Verification Status'
                 value={ get(formData, 'verificationStatus', '') }
                 onChange={ this.changeState.bind(this, 'verificationStatus')}
-                floatingLabelFixed={true}
+                //floatingLabelFixed={true}
                 fullWidth
               >
-                <MenuItem value={0} primaryText="unconfirmed" />
-                <MenuItem value={1} primaryText="confirmed" />
-                <MenuItem value={2} primaryText="refuted" />
-                <MenuItem value={3} primaryText="entered-in-error" />
-              </SelectField>
-
-            </Col>
-
-            <Col md={3} >
-              <SelectField
+                <MenuItem value={0} >unconfirmed</MenuItem>
+                <MenuItem value={1} >confirmed</MenuItem>
+                <MenuItem value={2} >refuted</MenuItem>
+                <MenuItem value={3} >entered-in-error</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={3}>
+              <Select
                   id='categoryInput'
-                  ref='category'
                   name='category'
-                  floatingLabelText='Category'
+                  //floatingLabelText='Category'
                   value={ get(formData, 'category', '') }
                   onChange={ this.changeState.bind(this, 'category')}
-                  floatingLabelFixed={true}
+                  //floatingLabelFixed={true}
                   fullWidth
                 >
-                  <MenuItem value={0} primaryText="food" />
-                  <MenuItem value={1} primaryText="medication" />
-                  <MenuItem value={2} primaryText="environment" />
-                  <MenuItem value={3} primaryText="biologic" />
-                </SelectField>
-
-            </Col>
-            <Col md={3} >
-              <SelectField
+                  <MenuItem value={0} >food</MenuItem>
+                  <MenuItem value={1} >medication</MenuItem>
+                  <MenuItem value={2} >environment</MenuItem>
+                  <MenuItem value={3} >biologic</MenuItem>
+                </Select>
+            </Grid>
+            <Grid item xs={3}>
+              <Select
                 id='typeInput'
-                ref='type'
                 name='type'
-                floatingLabelText='Type'
+                //floatingLabelText='Type'
                 value={ get(formData, 'type', '') }
                 onChange={ this.changeState.bind(this, 'type')}
-                floatingLabelFixed={true}
+                //floatingLabelFixed={true}
                 fullWidth
               >
-                <MenuItem value={0} primaryText="allergy" />
-                <MenuItem value={1} primaryText="intollerance" />
-              </SelectField>
+                <MenuItem value={0} >allergy</MenuItem>
+                <MenuItem value={1} >intollerance</MenuItem>
+              </Select>
+            </Grid>
+          </Grid>
 
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md={4} >
-              <TextField
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+             <TextField
                 id='identifierInput'
-                ref='identifier'
                 name='identifier'
                 floatingLabelText='Identifier'            
                 value={ get(formData, 'allergyIdentifier', '') }
@@ -282,11 +280,10 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4} >
+            </Grid>
+            <Grid item xs={4}>
               <TextField
                 id='reactionInput'
-                ref='reaction'
                 name='reaction'
                 floatingLabelText='Reaction Description'
                 value={ get(formData, 'reactionDescription', '') }
@@ -295,11 +292,10 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4} >
+            </Grid>
+            <Grid item xs={4}>
               <SelectField
                 id='criticalityInput'
-                ref='criticality'
                 name='criticality'
                 floatingLabelText='Criticality'
                 value={ get(formData, 'criticality', '') }
@@ -311,14 +307,13 @@ export class AllergyIntoleranceDetail extends React.Component {
                 <MenuItem value={1} primaryText="high" />
                 <MenuItem value={2} primaryText="unable-to-assess" />
               </SelectField>
+            </Grid>
+          </Grid>
 
-            </Col>            
-          </Row>
-          <Row>
-            <Col md={4} >
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
               <TextField
                 id='patientDisplayInput'
-                ref='patientDisplay'
                 name='patientDisplay'
                 floatingLabelText='Patient'
                 value={ get(formData, 'patientDisplay', '') }
@@ -327,11 +322,10 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
-            </Col>
-            <Col md={4} >
+            </Grid>
+            <Grid item xs={4}>
               <TextField
                 id='recorderDisplayInput'
-                ref='recorderDisplay'
                 name='recorderDisplay'
                 floatingLabelText='Recorder'
                 value={ get(formData, 'recorderDisplay', '') }
@@ -340,15 +334,14 @@ export class AllergyIntoleranceDetail extends React.Component {
                 floatingLabelFixed={true}
                 fullWidth
                 /><br/>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
 
-          <br/>
+          {/* <br/>
           { this.renderDatePicker(this.data.showDatePicker, get(this, 'data.allergy.onsetDateTime') ) }
-          <br/>
-          
-
-        </CardText>
+          <br/> */}
+        
+        </CardContent>
         <CardActions>
           { this.determineButtons(this.state.allergyIntoleranceId ) }
         </CardActions>
@@ -360,13 +353,13 @@ export class AllergyIntoleranceDetail extends React.Component {
     if (allergyId) {
       return (
         <div>
-          <RaisedButton id="updateAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this) } style={{marginRight: '20px'}} />
-          <RaisedButton id="deleteAllergyIntoleranceButton" label="Delete" onClick={this.handleDeleteButton.bind(this) } />
+          <Button id="updateAllergyIntoleranceButton" primary={true} onClick={this.handleSaveButton.bind(this) } style={{marginRight: '20px'}} >Save</Button>
+          <Button id="deleteAllergyIntoleranceButton" onClick={this.handleDeleteButton.bind(this) } >Delete</Button>
         </div>
       );
     } else {
       return(
-        <RaisedButton id="saveAllergyIntoleranceButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this) } />
+        <Button id="saveAllergyIntoleranceButton" primary={true} onClick={this.handleSaveButton.bind(this) } >Save</Button>
       );
     }
   }
@@ -540,13 +533,13 @@ export class AllergyIntoleranceDetail extends React.Component {
         {_id: this.state.allergyIntoleranceId}, {$set: fhirAllergyData }, function(error, result) {
           if (error) {
             console.log("error", error);
-            Bert.alert(error.reason, 'danger');
+            // Bert.alert(error.reason, 'danger');
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
             Session.set('allergyIntolerancePageTabIndex', 1);
             Session.set('selectedAllergyIntolerance', false);
-            Bert.alert('AllergyIntolerance updated!', 'success');
+            // Bert.alert('AllergyIntolerance updated!', 'success');
           }
         });
     } else {
@@ -556,13 +549,13 @@ export class AllergyIntoleranceDetail extends React.Component {
       AllergyIntolerances._collection.insert(fhirAllergyData, function(error, result) {
         if (error) {
           console.log("error", error);
-          Bert.alert(error.reason, 'danger');
+          // Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
           Session.set('allergyIntolerancePageTabIndex', 1);
           Session.set('selectedAllergyIntolerance', false);
-          Bert.alert('AllergyIntolerance added!', 'success');
+          // Bert.alert('AllergyIntolerance added!', 'success');
         }
       });
     }
@@ -576,13 +569,13 @@ export class AllergyIntoleranceDetail extends React.Component {
     let self = this;
     AllergyIntolerances._collection.remove({_id: this.state.allergyIntoleranceId}, function(error, result){
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // Bert.alert(error.reason, 'danger');
       }
       if (result) {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "AllergyIntolerances", recordId: self.data.allergyIntoleranceId});
         Session.set('allergyIntolerancePageTabIndex', 1);
         Session.set('selectedAllergyIntolerance', false);
-        Bert.alert('AllergyIntolerance removed!', 'success');
+        // Bert.alert('AllergyIntolerance removed!', 'success');
       }
     });
   }

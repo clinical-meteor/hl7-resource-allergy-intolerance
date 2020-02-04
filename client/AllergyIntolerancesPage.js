@@ -6,9 +6,21 @@
 //
 // =======================================================================
 
-import { CardText, CardTitle } from 'material-ui/Card';
-import {Tab, Tabs} from 'material-ui/Tabs';
-import { GlassCard, VerticalCanvas, FullPageCanvas, Glass } from 'meteor/clinical:glass-ui';
+import { 
+  CssBaseline,
+  Grid, 
+  Container,
+  Divider,
+  Card,
+  CardHeader,
+  CardContent,
+  Button,
+  Tab, 
+  Tabs,
+  Typography,
+  Box
+} from '@material-ui/core';
+import { StyledCard, PageCanvas } from 'material-fhir-ui';
 
 import AllergyIntoleranceDetail from './AllergyIntoleranceDetail';
 import AllergyIntolerancesTable from './AllergyIntolerancesTable';
@@ -18,6 +30,29 @@ import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
 
+
+//=============================================================================================================================================
+// TABS
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
+//=============================================================================================================================================
+// COMPONENT
 
 Session.setDefault('fhirVersion', 'v1.0.2');
 Session.setDefault('selectedAllergyIntolerance', false);
@@ -63,13 +98,34 @@ export class AllergyIntolerancesPage extends React.Component {
 
   render() {
     if(process.env.NODE_ENV === "test") console.log('In AllergyIntolerancesPage render');
+
+    let headerHeight = 64;
+    if(get(Meteor, 'settings.public.defaults.prominantHeader')){
+      headerHeight = 128;
+    }
+
     return (
       <div id='allergyIntolerancesPage'>
-        <FullPageCanvas>
-          <GlassCard height='auto'>
-            <CardTitle title='Allergy Intolerances' />
-            <CardText>
-              <Tabs id="allergyIntolerancesPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
+        <StyledCard height="auto" scrollable={true} margin={20} headerHeight={headerHeight} >
+            <CardHeader title='Allergy Intolerances' />
+            <CardContent>
+              <Tabs id="allergyIntolerancesPageTabs" value={this.data.tabIndex} onChange={this.handleTabChange } aria-label="simple tabs example">
+                <Tab label="History" value={0} />
+                <Tab label="New" value={1} />
+              </Tabs>
+              <TabPanel >
+                <AllergyIntolerancesTable id='allergyIntolerancesTable' fhirVersion={ this.data.fhirVersion } />
+              </TabPanel >
+              <TabPanel >
+                <AllergyIntoleranceDetail 
+                  id='allergyIntoleranceDetails' 
+                  showDatePicker={true} 
+                  fhirVersion={ this.data.fhirVersion }
+                  allergy={ this.data.selectedAllergy }
+                  allergyIntoleranceId={ this.data.allergyIntoleranceId } />
+              </TabPanel >
+
+              {/* <Tabs default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                <Tab className='newAllergyIntoleranceTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
                  <AllergyIntoleranceDetail 
                   id='newAllergyIntolerance' 
@@ -89,10 +145,9 @@ export class AllergyIntolerancesPage extends React.Component {
                     allergy={ this.data.selectedAllergy }
                     allergyIntoleranceId={ this.data.allergyIntoleranceId } />
                </Tab>
-             </Tabs>
-            </CardText>
-          </GlassCard>
-        </FullPageCanvas>
+             </Tabs> */}
+            </CardContent>
+        </StyledCard>
       </div>
     );
   }

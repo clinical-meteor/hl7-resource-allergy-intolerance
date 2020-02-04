@@ -6,16 +6,23 @@
 //
 // =======================================================================
 
-
-import { Card, CardActions, CardMedia, CardText, CardTitle, Toggle } from 'material-ui';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+} from '@material-ui/core';
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import { Table } from 'react-bootstrap';
+
+// import { Table } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import { moment } from 'meteor/momentjs:moment';
+import { moment } from 'moment';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -121,18 +128,18 @@ export class AllergyIntolerancesTable extends React.Component {
   renderTogglesHeader(){
     if (!this.props.hideToggle) {
       return (
-        <th className="toggle">Toggle</th>
+        <TableHead className="toggle">Toggle</TableHead>
       );
     }
   }
   renderToggles(patientId ){
     if (!this.props.hideToggle) {
       return (
-        <td className="toggle">
+        <TableCell className="toggle">
             <Toggle
               defaultToggled={true}
             />
-          </td>
+          </TableCell>
       );
     }
   }
@@ -140,7 +147,7 @@ export class AllergyIntolerancesTable extends React.Component {
   renderIdentifierHeader(){
     if (!this.props.hideIdentifier) {
       return (
-        <th className="identifier">Identifier</th>
+        <TableHead className="identifier">Identifier</TableHead>
       );
     }
   }
@@ -148,21 +155,21 @@ export class AllergyIntolerancesTable extends React.Component {
     if (!this.props.hideIdentifier) {
       
       return (
-        <td className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</td>       );
+        <TableCell className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</TableCell>       );
     }
   }
 
   renderDateHeader(){
     if (!this.props.hideDates) {
       return (
-        <th className='date'>Date</th>
+        <TableHead className='date'>Date</TableHead>
       );
     }
   }
   renderDate(newDate ){
     if (!this.props.hideDates) {
       return (
-        <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
+        <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
@@ -172,28 +179,28 @@ export class AllergyIntolerancesTable extends React.Component {
   renderClinicalStatusHeader(){
     if (!this.props.hideStatus) {
       return (
-        <th className="clinicalStatus">Status</th>
+        <TableHead className="clinicalStatus">Status</TableHead>
       );
     }
   }
   renderClinicalStatus(allergyIntolerances ){
     if (!this.props.hideStatus) {
       return (
-        <td className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</td>       );
+        <TableCell className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</TableCell>       );
     }
   }
 
   renderRecorderHeader(){
     if (!this.props.hideStatus) {
       return (
-        <th className="clinicalStatus">Status</th>
+        <TableHead className="clinicalStatus">Status</TableHead>
       );
     }
   }
   renderRecorder(allergyIntolerances ){
     if (!this.props.hideRecorder) {
       return (
-        <td className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</td>       );
+        <TableCell className='clinicalStatus'>{ get(allergyIntolerances, 'clinicalStatus') }</TableCell>       );
     }
   }
 
@@ -201,14 +208,14 @@ export class AllergyIntolerancesTable extends React.Component {
   renderVerificationStatusHeader(){
     if (!this.props.hideVerification) {
       return (
-        <th className="verificationStatus">Verification</th>
+        <TableHead className="verificationStatus">Verification</TableHead>
       );
     }
   }
   renderVerificationStatus(allergyIntolerances ){
     if (!this.props.hideVerification) {
       return (
-        <td className='verificationStatus'>{ get(allergyIntolerances, 'verificationStatus') }</td>       );
+        <TableCell className='verificationStatus'>{ get(allergyIntolerances, 'verificationStatus') }</TableCell>       );
     }
   }
 
@@ -216,33 +223,33 @@ export class AllergyIntolerancesTable extends React.Component {
   renderTypeHeader(){
     if (!this.props.hideType) {
       return (
-        <th className="type">Type</th>
+        <TableHead className="type">Type</TableHead>
       );
     }
   }
   renderType(allergyIntolerances ){
     if (!this.props.hideType) {
       return (
-        <td className='type'>{ get(allergyIntolerances, 'type') }</td>       );
+        <TableCell className='type'>{ get(allergyIntolerances, 'type') }</TableCell>       );
     }
   }
   renderCategoryHeader(){
     if (!this.props.hideCategory) {
       return (
-        <th className="category">Category</th>
+        <TableHead className="category">Category</TableHead>
       );
     }
   }
   renderCategory(allergyIntolerances ){
     if (!this.props.hideCategory) {
       return (
-        <td className='category'>{ get(allergyIntolerances, 'category[0]') }</td>       );
+        <TableCell className='category'>{ get(allergyIntolerances, 'category[0]') }</TableCell>       );
     }
   }
   renderActionIconsHeader(){
     if (!this.props.hideActionIcons) {
       return (
-        <th className='actionIcons' style={{minWidth: '120px'}}>Actions</th>
+        <TableHead className='actionIcons' style={{minWidth: '120px'}}>Actions</TableHead>
       );
     }
   }
@@ -257,24 +264,24 @@ export class AllergyIntolerancesTable extends React.Component {
       }
 
       return (
-        <td className='actionIcons' style={{minWidth: '120px'}}>
+        <TableCell className='actionIcons' style={{minWidth: '120px'}}>
           <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, allergyIntolerance)} />
           <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, allergyIntolerance._id)} />  
-        </td>
-      );
+        </TableCell>
+      );      
     }
   } 
   renderPatientNameHeader(){
     if (!this.props.hidePatient) {
       return (
-        <th className='patientDisplay'>Patient</th>
+        <TableHead className='patientDisplay'>Patient</TableHead>
       );
     }
   }
   renderPatientName(patientDisplay ){
     if (!this.props.hidePatient) {
       return (
-        <td className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</td>
+        <TableCell className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</TableCell>
       );
     }
   }
@@ -357,50 +364,50 @@ export class AllergyIntolerancesTable extends React.Component {
       }
 
       tableRows.push(
-        <tr key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
+        <TableRow key={i} className="allergyIntoleranceRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.allergyIntolerances[i]._id)} >
           { this.renderToggles(this.data.allergyIntolerances[i]) }
           { this.renderActionIcons(this.data.allergyIntolerances[i]) }
           { this.renderIdentifier(this.data.allergyIntolerances[i]) }
-          <td className='substance'>{ newRow.substance }</td>
-          <td className='reaction'>{ newRow.reaction }</td>
-          <td className='criticality'>{ newRow.criticality }</td>
+          <TableCell className='substance'>{ newRow.substance }</TableCell>
+          <TableCell className='reaction'>{ newRow.reaction }</TableCell>
+          <TableCell className='criticality'>{ newRow.criticality }</TableCell>
           { this.renderType(this.data.allergyIntolerances[i]) }
           { this.renderCategory(this.data.allergyIntolerances[i]) }
           { this.renderPatientName(newRow.patientDisplay ) } 
-          {/* <td className='patient'>{ newRow.patient }</td> */}
-          <td className='recorder'>{ newRow.recorder }</td>
-          <td className='onset'>{ newRow.onset }</td>
+          {/* <TableCell className='patient'>{ newRow.patient }</TableCell> */}
+          <TableCell className='recorder'>{ newRow.recorder }</TableCell>
+          <TableCell className='onset'>{ newRow.onset }</TableCell>
           { this.renderClinicalStatus(this.data.allergyIntolerances[i]) }
           { this.renderVerificationStatus(this.data.allergyIntolerances[i]) }
           {/* { this.renderDate(this.data.allergyIntolerances[i].assertedDate) } */}
-        </tr>
+        </TableRow>
       )
     }
 
     return(
       <Table id='allergyIntolerancesTable' hover >
-        <thead>
-          <tr>
+        <TableHeader>
+          <TableRow>
             { this.renderTogglesHeader() }
             { this.renderActionIconsHeader() }
             { this.renderIdentifierHeader() }
-            <th className='substance'>Substance</th>
-            <th className='reaction'>Reaction</th>
-            <th className='criticality'>Criticality</th>
+            <TableHead className='substance'>Substance</TableHead>
+            <TableHead className='reaction'>Reaction</TableHead>
+            <TableHead className='criticality'>Criticality</TableHead>
             { this.renderTypeHeader() }
             { this.renderCategoryHeader() }
             { this.renderPatientNameHeader() }
-            {/* <th className='patient' style={{minWidth: '140px'}}>Patient</th> */}
-            <th className='recorder'  style={{minWidth: '140px'}}>Recorder</th>
-            <th className='onsert'>Onset</th>
+            {/* <TableHead className='patient' style={{minWidth: '140px'}}>Patient</TableHead> */}
+            <TableHead className='recorder'  style={{minWidth: '140px'}}>Recorder</TableHead>
+            <TableHead className='onsert'>Onset</TableHead>
             { this.renderClinicalStatusHeader() }
             { this.renderVerificationStatusHeader() }
             {/* { this.renderDateHeader() } */}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           { tableRows }
-        </tbody>
+        </TableBody>
       </Table>
     );
   }
